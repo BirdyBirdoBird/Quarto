@@ -42,17 +42,6 @@ public class Control extends JFrame
             Square piece = new Square(i / 2, i % 2, this.frame, true);
             piece.addPiece(isRed, isBig, isRound, isHollow);
             piece.setControl(this);
-//            piece.addMouseListener(new java.awt.event.MouseAdapter() {
-//                public void mouseClicked(java.awt.event.MouseEvent evt) {
-//                    if (selectedPiece != null) {
-//                        selectedPiece.setBackground(Color.LIGHT_GRAY);
-//                    }
-//                    selectedPiece = piece;
-//                    piece.setBackground(Color.YELLOW);
-//                    frame.setSelectedSquare(selectedPiece);
-//                }
-//            });
-
             selectionPanel.add(piece);
         }
 
