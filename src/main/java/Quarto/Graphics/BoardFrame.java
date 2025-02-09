@@ -1,0 +1,113 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+package Quarto.Graphics;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import Quarto.Logics.GameLogic;
+
+public class BoardFrame extends JFrame
+{
+    private JPanel boardPanel;
+    private Control control;
+    private Square[][] board;
+    private GameLogic gameLogic;
+    private String name1, name2;
+    private boolean isOneWin;
+    public boolean isGameOver;
+
+    public BoardFrame (String name1, String name2)
+    {
+        setTitle("Querto Game Board");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(800, 800);
+
+        this.name1 = name1;
+        this.name2 = name2;
+        isOneWin = true;
+        isGameOver = false;
+
+        board = new Square[4][4];
+        boardPanel = new JPanel(new GridLayout(4, 4));
+        gameLogic = new GameLogic();
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                final int row = i;
+                final int col = j;
+                Square square = new Square(row, col, this, false);
+                board[i][j] = square;
+                boardPanel.add(square);
+            }
+        }
+
+        add(boardPanel, BorderLayout.CENTER);
+        setVisible(true);
+    }
+
+    public void setControl (Control control)
+    {
+        this.control = control;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                board[i][j].setControl(control);
+            }
+        }
+    }
+
+    public void addPiece (int row, int col, Square square)
+    {
+        if (control.getSelectedPiece() != null && square != null)
+        {
+            Square controlSquare = control.getSelectedPiece();
+            square.addPiece(controlSquare.isRed, controlSquare.isHollow, controlSquare.isBig, controlSquare.isRound);
+            board[row][col] = square;
+            control.useSelectedPiece();
+            gameLogic.addPiece(square.row, square.col, square);
+            checkGameOver();
+            isOneWin = !isOneWin;
+        }
+    }
+
+
+    public void resetBoard() {
+        boardPanel.removeAll();
+        isOneWin = true;
+        isGameOver = false;
+
+        board = new Square[4][4];
+        gameLogic = new GameLogic();
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                int row = i;
+                int col = j;
+                Square square = new Square(row, col, this, false);
+                square.setControl(control);
+                board[i][j] = square;
+                boardPanel.add(square);
+            }
+        }
+
+        boardPanel.revalidate();
+        boardPanel.repaint();
+    }
+
+    private void checkGameOver() {
+        if (gameLogic.isGameOver()) {
+            JOptionPane.showMessageDialog(this, "Game Over! " + ((isOneWin) ? name1 : name2) + " Won!","Alert", JOptionPane.INFORMATION_MESSAGE);
+            isGameOver = true;
+        }
+    }
+
+
+}
+
