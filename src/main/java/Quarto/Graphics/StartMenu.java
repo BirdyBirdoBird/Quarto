@@ -56,6 +56,11 @@ public class StartMenu extends JFrame implements ActionListener {
         player1 = new JTextField(20);
         player2 = new JTextField(20);
 
+        player1.setText("player 1");
+        player2.setText("player 2");
+        updateText1();
+        updateText2();
+
         player1.setEditable(true);
         player2.setEditable(true);
 
