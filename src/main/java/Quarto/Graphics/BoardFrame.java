@@ -71,12 +71,29 @@ public class BoardFrame extends JFrame
             square.addPiece(controlSquare.isRed, controlSquare.isHollow, controlSquare.isBig, controlSquare.isRound);
             board[row][col] = square;
             control.useSelectedPiece();
-            gameLogic.addPiece(square.row, square.col, square);
+            gameLogic.addPiece(square.row, square.col, calculateBits(square));
             checkGameOver();
             isOneWin = !isOneWin;
         }
     }
 
+    // Calcutle the bits that need to be on to reconize the piece
+    public int calculateBits(Square square){
+        int bits = 0;
+        if(square.isRed){
+            bits += 1;
+        }
+        if(square.isBig){
+            bits += 2;
+        }
+        if(square.isEmpty){
+            bits += 4;
+        }
+        if(square.isHollow){
+            bits += 8;
+        }
+        return  bits;
+    }
 
     public void resetBoard() {
         boardPanel.removeAll();

@@ -5,18 +5,15 @@
 
 package Quarto.Logics;
 
-import Quarto.Graphics.Square;
 
-public class GameLogic
-{
-    private Square[][] board;
+public class GameLogic {
+    private int[][] board; // Using int to represent pieces
 
-    public GameLogic ()
-    {
-        board = new Square[4][4];
+    public GameLogic() {
+        board = new int[4][4]; // 0 represents an empty space
     }
 
-    public void addPiece(int row, int col, Square piece) {
+    public void addPiece(int row, int col, int piece) {
         board[row][col] = piece;
     }
 
@@ -29,36 +26,33 @@ public class GameLogic
         return checkLine(getDiagonal(true)) || checkLine(getDiagonal(false));
     }
 
-    private Square[] getRow(int row) {
+    private int[] getRow(int row) {
         return board[row];
     }
 
-    private Square[] getColumn(int col) {
-        Square[] column = new Square[4];
+    private int[] getColumn(int col) {
+        int[] column = new int[4];
         for (int i = 0; i < 4; i++) {
             column[i] = board[i][col];
         }
         return column;
     }
 
-    private Square[] getDiagonal(boolean main) {
-        Square[] diagonal = new Square[4];
+    private int[] getDiagonal(boolean main) {
+        int[] diagonal = new int[4];
         for (int i = 0; i < 4; i++) {
             diagonal[i] = main ? board[i][i] : board[i][3 - i];
         }
         return diagonal;
     }
 
-    private boolean checkLine(Square[] line) {
-        if (line[0] == null) return false;
-        boolean sameColor = true, sameSize = true, sameShape = true, sameFill = true;
+    private boolean checkLine(int[] line) {
+        if (line[0] == 0) return false; // Empty space check
+        int commonBits = line[0];
         for (int i = 1; i < line.length; i++) {
-            if (line[i] == null) return false;
-            sameColor &= (line[i].isRed == line[0].isRed);
-            sameSize &= (line[i].isBig == line[0].isBig);
-            sameShape &= (line[i].isRound == line[0].isRound);
-            sameFill &= (line[i].isHollow == line[0].isHollow);
+            if (line[i] == 0) return false;
+            commonBits &= line[i]; // Check for common attributes
         }
-        return sameColor || sameSize || sameShape || sameFill;
+        return commonBits != 0; // If any bit remains, there is a common attribute
     }
 }
