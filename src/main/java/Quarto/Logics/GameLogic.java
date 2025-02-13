@@ -2,11 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package Quarto.Logics;
 
-
 public class GameLogic {
+
     private int[][] board; // Using int to represent pieces
 
     public GameLogic() {
@@ -47,12 +46,36 @@ public class GameLogic {
     }
 
     private boolean checkLine(int[] line) {
-        if (line[0] == 0) return false; // Empty space check
-        int commonBits = line[0];
+        if (line[0] == 0) {
+            return false; // Empty space check
+
+                }int commonBits = line[0];
         for (int i = 1; i < line.length; i++) {
-            if (line[i] == 0) return false;
+            if (line[i] == 0) {
+                return false;
+            }
             commonBits &= line[i]; // Check for common attributes
         }
+
+        if(commonBits != 0){
+            System.out.println(decodePiece(commonBits));
+        }
+        
         return commonBits != 0; // If any bit remains, there is a common attribute
     }
+
+    // Decode a piece into its attributes
+    public static String decodePiece(int piece) {
+        if (piece == 0) {
+            return "Empty";
+        }
+
+        String color = (piece & 1) != 0 ? "Light" : "Dark";
+        String size = (piece & 2) != 0 ? "Big" : "Small";
+        String shape = (piece & 4) != 0 ? "Round" : "Square";
+        String fill = (piece & 8) != 0 ? "Hollow" : "Solid";
+
+        return color + ", " + size + ", " + shape + ", " + fill;
+    }
+
 }

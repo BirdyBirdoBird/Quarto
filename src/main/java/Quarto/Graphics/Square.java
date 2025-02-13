@@ -5,11 +5,15 @@
 
 package Quarto.Graphics;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 /**
  *
@@ -132,8 +136,6 @@ public class Square extends JPanel {
         }
     }
 
-
-
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(200, 200);
@@ -145,6 +147,8 @@ public class Square extends JPanel {
     }
 
     private class Click extends MouseAdapter {
+
+        @Override
         public void mousePressed(MouseEvent e) {
             if (frame.isGameOver) return;
 
@@ -162,7 +166,5 @@ public class Square extends JPanel {
 
         }
     }
-
-
 
 }
