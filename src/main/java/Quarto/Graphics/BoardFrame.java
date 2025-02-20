@@ -119,6 +119,10 @@ public class BoardFrame extends JFrame
     }
 
     private void checkGameOver() {
+        if(gameLogic.isDraw()){
+            JOptionPane.showMessageDialog(this, "Game Over! " + "Its a Draw!","Alert", JOptionPane.INFORMATION_MESSAGE);
+            isGameOver = true;
+        }
         if (gameLogic.isGameOver()) {
             JOptionPane.showMessageDialog(this, "Game Over! " + ((isOneWin) ? name1 : name2) + " Won!","Alert", JOptionPane.INFORMATION_MESSAGE);
             isGameOver = true;
