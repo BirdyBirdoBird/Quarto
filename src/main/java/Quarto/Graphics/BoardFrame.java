@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Quarto.Logics.GameLogic;
+import Quarto.Utils.Utils;
 
 public class BoardFrame extends JFrame
 {
@@ -71,28 +72,10 @@ public class BoardFrame extends JFrame
             square.addPiece(controlSquare.isRed, controlSquare.isHollow, controlSquare.isBig, controlSquare.isRound);
             board[row][col] = square;
             control.useSelectedPiece();
-            gameLogic.addPiece(square.row, square.col, encodePiece(square));
+            gameLogic.addPiece(square.row, square.col, Utils.encodePiece(square));
             checkGameOver();
             isOneWin = !isOneWin;
         }
-    }
-
-    // Calcutle the bits that need to be on to reconize the piece
-    public int encodePiece(Square square){
-        int bits = 0;
-        if(square.isRed){
-            bits += 2;
-        }
-        if(square.isBig){
-            bits += 4;
-        }
-        if(square.isEmpty){
-            bits += 8;
-        }
-        if(square.isHollow){
-            bits += 16;
-        }
-        return  bits;
     }
 
     public void resetBoard() {

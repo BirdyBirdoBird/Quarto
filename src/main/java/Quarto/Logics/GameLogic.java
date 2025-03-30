@@ -70,18 +70,4 @@ public class GameLogic {
 
         return commonBits != 0; 
     }
-
-    public static String decodePiece(int piece) {
-        if (piece == 0) {
-            return "Empty";
-        }
-
-        String color = (piece & 2) != 0 ? "Light" : "Dark";
-        String size = (piece & 4) != 0 ? "Big" : "Small";
-        String shape = (piece & 8) != 0 ? "Round" : "Square";
-        String fill = (piece & 16) != 0 ? "Hollow" : "Solid";
-
-        return color + ", " + size + ", " + shape + ", " + fill;
-    }
-
 }
