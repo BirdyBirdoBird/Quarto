@@ -108,10 +108,10 @@ public class Control extends JFrame
     private void resetSelection() {
         selectionPanel.removeAll();
         for (int i = 0; i < 16; i++) {
-            boolean isRed = i < 8;
-            boolean isBig = i % 2 == 0;
-            boolean isRound = (i / 2) % 2 == 0;
-            boolean isHollow = (i / 4) % 2 == 0;
+            boolean isRed = i < 16;
+            boolean isBig = (i / 2) % 2 == 0;
+            boolean isRound = (i / 4) % 2 == 0;
+            boolean isHollow = (i / 8) % 2 == 0;
 
             Square piece = new Square(i / 2, i % 2, frame, true);
             piece.addPiece(isRed, isBig, isRound, isHollow);

@@ -76,10 +76,10 @@ public class GameLogic {
             return "Empty";
         }
 
-        String color = (piece & 1) != 0 ? "Light" : "Dark";
-        String size = (piece & 2) != 0 ? "Big" : "Small";
-        String shape = (piece & 4) != 0 ? "Round" : "Square";
-        String fill = (piece & 8) != 0 ? "Hollow" : "Solid";
+        String color = (piece & 2) != 0 ? "Light" : "Dark";
+        String size = (piece & 4) != 0 ? "Big" : "Small";
+        String shape = (piece & 8) != 0 ? "Round" : "Square";
+        String fill = (piece & 16) != 0 ? "Hollow" : "Solid";
 
         return color + ", " + size + ", " + shape + ", " + fill;
     }

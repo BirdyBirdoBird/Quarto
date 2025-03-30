@@ -81,16 +81,16 @@ public class BoardFrame extends JFrame
     public int encodePiece(Square square){
         int bits = 0;
         if(square.isRed){
-            bits += 1;
-        }
-        if(square.isBig){
             bits += 2;
         }
-        if(square.isEmpty){
+        if(square.isBig){
             bits += 4;
         }
-        if(square.isHollow){
+        if(square.isEmpty){
             bits += 8;
+        }
+        if(square.isHollow){
+            bits += 16;
         }
         return  bits;
     }
