@@ -61,7 +61,7 @@ public class GameLogic {
         for (int i = 1; i < line.length; i++) {
             if (line[i] == 0) return false;
     
-            int pieceBits = line[i] - 1; // because we added 1 during encoding
+            int pieceBits = line[i] - 1;
             andBits &= pieceBits;
             orNotBits &= ~pieceBits;
         }
