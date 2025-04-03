@@ -53,21 +53,19 @@ public class GameLogic {
     }
 
     private boolean checkLine(int[] line) {
-        if (line[0] == 0) {
-            return false; 
-        }
-        int commonBits = line[0];
+        if (line[0] == 0) return false;
+    
+        int andBits = line[0] - 1;
+        int orNotBits = ~andBits;
+    
         for (int i = 1; i < line.length; i++) {
-            if (line[i] == 0) {
-                return false;
-            }
-            commonBits &= line[i]; 
+            if (line[i] == 0) return false;
+    
+            int pieceBits = line[i] - 1; // because we added 1 during encoding
+            andBits &= pieceBits;
+            orNotBits &= ~pieceBits;
         }
-
-        if(commonBits != 0){
-            System.out.println(commonBits);
-        }
-
-        return commonBits != 0; 
-    }
+    
+        return (andBits | orNotBits) != 0;
+    }    
 }
