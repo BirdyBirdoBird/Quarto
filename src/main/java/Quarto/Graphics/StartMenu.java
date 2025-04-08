@@ -19,6 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import Quarto.GameStateManager;
+
 public class StartMenu extends JFrame implements ActionListener {
 
     private MenuPanel contentPane;
@@ -239,8 +241,7 @@ public class StartMenu extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == fightComputer) {
-            BoardFrame boardFrame = new BoardFrame(name1, name2);
-            Control control = new Control(boardFrame, this);
+            GameStateManager stateManager = new GameStateManager(true, this);
             dispose();
         }
 

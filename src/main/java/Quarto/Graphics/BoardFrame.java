@@ -18,9 +18,9 @@ import Quarto.Utils.Utils;
 public class BoardFrame extends JFrame
 {
     private JPanel boardPanel;
-    private Control control;
+    public Control control;
     private Square[][] board;
-    private GameLogic gameLogic;
+    public GameLogic gameLogic;
     private String name1, name2;
     private boolean isOneWin;
     public boolean isGameOver;
@@ -53,7 +53,7 @@ public class BoardFrame extends JFrame
         add(boardPanel, BorderLayout.CENTER);
         setVisible(true);
     }
-
+ 
     public void setControl (Control control)
     {
         this.control = control;
@@ -111,7 +111,6 @@ public class BoardFrame extends JFrame
             isGameOver = true;
         }
     }
-
 
 }
 

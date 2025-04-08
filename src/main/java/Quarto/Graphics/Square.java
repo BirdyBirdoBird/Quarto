@@ -15,6 +15,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import Quarto.Constants;
+import Quarto.Utils.GameState;
+
 /**
  *
  * @author david
@@ -152,14 +155,16 @@ public class Square extends JPanel {
         public void mousePressed(MouseEvent e) {
             if (frame.isGameOver) return;
 
-            if (isEmpty && !isControl) {
+            if (isEmpty && !isControl && Constants.gameState == GameState.PLAYER_PLACE_MOVE) {
                 frame.addPiece(row, col, getThis());
+                Constants.gameState = GameState.PLAYER_SELECT_MOVE;
                 return;
             }
 
-            if (isControl)
+            if (isControl && Constants.gameState == GameState.PLAYER_SELECT_MOVE)
             {
                 control.setSelectedPiece(getThis());
+                Constants.gameState = GameState.BOT_PLACE_MOVE;
                 setBackground(Color.YELLOW);
                 repaint();
             }

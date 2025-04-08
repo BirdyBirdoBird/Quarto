@@ -7,16 +7,20 @@ package Quarto.Graphics;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import Quarto.Utils.Utils;
+
 public class Control extends JFrame
 {
     private Square selectedPiece;
-    private JPanel selectionPanel;
+    public JPanel selectionPanel;
     private BoardFrame frame;
     private StartMenu startMenu;
 
@@ -121,4 +125,20 @@ public class Control extends JFrame
         selectionPanel.revalidate();
         selectionPanel.repaint();
     }
+
+    public List<Integer> getAvailablePieces() {
+        List<Integer> availablePieces = new ArrayList<>();
+    
+        for (int i = 0; i < selectionPanel.getComponentCount(); i++) {
+            if (selectionPanel.getComponent(i) instanceof Square) {
+                Square piece = (Square) selectionPanel.getComponent(i);
+                if (!piece.isEmpty) {
+                    availablePieces.add(Utils.encodePiece(piece));
+                }
+            }
+        }
+    
+        return availablePieces;
+    }
+    
 }
