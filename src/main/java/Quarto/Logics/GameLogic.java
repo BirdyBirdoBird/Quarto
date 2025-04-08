@@ -56,16 +56,20 @@ public class GameLogic {
         if (line[0] == 0) return false;
     
         int andBits = line[0] - 1;
-        int orNotBits = ~andBits;
+        int orBits = line[0] - 1;
     
         for (int i = 1; i < line.length; i++) {
             if (line[i] == 0) return false;
     
             int pieceBits = line[i] - 1;
             andBits &= pieceBits;
-            orNotBits &= ~pieceBits;
+            orBits |= pieceBits;
         }
     
-        return (andBits | orNotBits) != 0;
-    }    
+        return (andBits | ~orBits & 0b1111) != 0;
+    }
+    
+    public void removePiece(int i, int j){
+        board[i][j] = 0;
+    }
 }
