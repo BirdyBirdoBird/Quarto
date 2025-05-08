@@ -4,18 +4,19 @@
  */
 package Quarto.Logics;
 
+import Quarto.Constants;
+
 public class GameLogic {
 
-    private int[][] board;
     private int turns;
     public GameLogic() {
-        board = new int[4][4]; 
+        Constants.logicBoard = new int[4][4]; 
         turns = 1;
     }
 
     public void addPiece(int row, int col, int piece) {
         System.out.println(piece);
-        board[row][col] = piece;
+        Constants.logicBoard[row][col] = piece;
     }
 
     public boolean isGameOver() {
@@ -33,13 +34,13 @@ public class GameLogic {
     }
 
     private int[] getRow(int row) {
-        return board[row];
+        return Constants.logicBoard[row];
     }
 
     private int[] getColumn(int col) {
         int[] column = new int[4];
         for (int i = 0; i < 4; i++) {
-            column[i] = board[i][col];
+            column[i] = Constants.logicBoard[i][col];
         }
         return column;
     }
@@ -47,7 +48,7 @@ public class GameLogic {
     private int[] getDiagonal(boolean main) {
         int[] diagonal = new int[4];
         for (int i = 0; i < 4; i++) {
-            diagonal[i] = main ? board[i][i] : board[i][3 - i];
+            diagonal[i] = main ? Constants.logicBoard[i][i] : Constants.logicBoard[i][3 - i];
         }
         return diagonal;
     }
@@ -70,6 +71,6 @@ public class GameLogic {
     }
     
     public void removePiece(int i, int j){
-        board[i][j] = 0;
+        Constants.logicBoard[i][j] = 0;
     }
 }

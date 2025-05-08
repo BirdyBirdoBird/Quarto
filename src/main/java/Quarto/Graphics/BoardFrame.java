@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Quarto.Logics.GameLogic;
+import Quarto.Utils.Move;
 import Quarto.Utils.Utils;
 
 public class BoardFrame extends JFrame
@@ -64,13 +65,17 @@ public class BoardFrame extends JFrame
         }
     }
 
+    public void addPiece(Move m){
+        addPiece(m.getRow(), m.getCol());
+    }
 
     public void addPiece(int row, int col){
         addPiece(row, col, board[row][col]);
     }
+
     private void addPiece (int row, int col, Square square)
     {
-        if (control.getSelectedPiece() != null && square != null)
+        if (control.getSelectedPiece() != null && square.isEmpty)
         {
             Square controlSquare = control.getSelectedPiece();
             square.addPiece(controlSquare.isRed, controlSquare.isHollow, controlSquare.isBig, controlSquare.isRound);

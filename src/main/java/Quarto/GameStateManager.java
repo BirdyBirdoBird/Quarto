@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Timer;
 
+import Quarto.Bot.Bot;
 import Quarto.Graphics.BoardFrame;
 import Quarto.Graphics.Control;
 import Quarto.Graphics.StartMenu;
@@ -19,6 +20,7 @@ import Quarto.Utils.GameState;
  * @author david
  */
 public class GameStateManager {
+    private final Bot bot = new Bot();
     private final BoardFrame frame;
     private final Control control;
     private Timer timer;
@@ -42,7 +44,7 @@ public class GameStateManager {
 
     public void game(){
         if(Constants.gameState == GameState.BOT_PLACE_MOVE){
-            /// 
+            frame.addPiece(bot.chooseMove());
             Constants.gameState = GameState.BOT_SELECT_MOVE;
         }
         if(Constants.gameState == GameState.BOT_SELECT_MOVE){

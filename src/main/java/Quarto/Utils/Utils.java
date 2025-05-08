@@ -5,6 +5,7 @@
 
 package Quarto.Utils;
 
+import Quarto.Constants;
 import Quarto.Graphics.BoardFrame;
 import Quarto.Graphics.Square;
 
@@ -54,5 +55,14 @@ public class Utils {
 
         square.addPiece(isRed, isHollow, isBig, isRound);
         return square;
+    }
+
+    public static int[][] getBoardCopy() {
+        int[][] src = Constants.logicBoard;
+        int[][] copy = new int[src.length][];
+        for (int i = 0; i < src.length; i++) {
+            copy[i] = src[i].clone();
+        }
+        return copy;
     }
 }
