@@ -13,7 +13,7 @@ public class Move {
     private final int pieceId, row, col;
     // ctor + getters
 
-    public Move(int col, int pieceId, int row) {
+    public Move(int row, int col, int pieceId) {
         this.col = col;
         this.pieceId = pieceId;
         this.row = row;

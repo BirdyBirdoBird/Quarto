@@ -15,7 +15,7 @@ public class GameLogic {
     }
 
     public void addPiece(int row, int col, int piece) {
-        System.out.println(piece);
+        //System.out.println(piece);
         Constants.logicBoard[row][col] = piece;
     }
 

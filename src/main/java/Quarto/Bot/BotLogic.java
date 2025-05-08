@@ -7,6 +7,7 @@ package Quarto.Bot;
 
 import java.util.Random;
 
+import Quarto.Constants;
 import Quarto.Utils.Move;
 
 /**
@@ -73,6 +74,17 @@ public class BotLogic {
     /** Return any legal Move (fallback). */
     public Move pickAnyMove() {
         Random r = new Random();
-        return new Move(r.nextInt(0,4), 0, r.nextInt(0,4));
+        int row, col;
+        // keep sampling until we hit an empty square (0)
+        do {
+            // board is 4×4, so indices 0–3
+            row = r.nextInt(0,4);
+            col = r.nextInt(0,4);
+        } while (Constants.logicBoard[row][col] != 0);
+    
+        System.out.printf("pickAnyMove (%d,%d)%n", row, col);
+    
+        // use the piece you were given (replace `currentPieceId` with your actual field)
+        return new Move(row, col, 0);
     }
 }
