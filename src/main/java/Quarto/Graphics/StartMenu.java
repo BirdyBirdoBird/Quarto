@@ -235,8 +235,7 @@ public class StartMenu extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == fightHuman) {
-            BoardFrame boardFrame = new BoardFrame(name1, name2);
-            Control control = new Control(boardFrame, this);
+            GameStateManager stateManager = new GameStateManager(false, this);
             dispose();
         }
 

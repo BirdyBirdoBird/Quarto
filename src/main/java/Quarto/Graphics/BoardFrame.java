@@ -64,7 +64,11 @@ public class BoardFrame extends JFrame
         }
     }
 
-    public void addPiece (int row, int col, Square square)
+
+    public void addPiece(int row, int col){
+        addPiece(row, col, board[row][col]);
+    }
+    private void addPiece (int row, int col, Square square)
     {
         if (control.getSelectedPiece() != null && square != null)
         {
