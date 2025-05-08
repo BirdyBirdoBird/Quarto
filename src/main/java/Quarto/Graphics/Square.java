@@ -155,19 +155,38 @@ public class Square extends JPanel {
         public void mousePressed(MouseEvent e) {
             if (frame.isGameOver) return;
 
-            if (isEmpty && !isControl && Constants.gameState == GameState.PLAYER_PLACE_MOVE) {
-                frame.addPiece(row, col, getThis());
-                Constants.gameState = GameState.PLAYER_SELECT_MOVE;
-                return;
+            if(Constants.botPLaying){
+
+                if (isEmpty && !isControl && Constants.gameState == GameState.PLAYER_PLACE_MOVE) {
+                    frame.addPiece(row, col, getThis());
+                    Constants.gameState = GameState.PLAYER_SELECT_MOVE;
+                    return;
+                }
+    
+                if (isControl && Constants.gameState == GameState.PLAYER_SELECT_MOVE)
+                {
+                    control.setSelectedPiece(getThis());
+                    Constants.gameState = GameState.BOT_PLACE_MOVE;
+                    setBackground(Color.YELLOW);
+                    repaint();
+                }
+            }
+            else{
+                
+                if (isEmpty && !isControl) {
+                    frame.addPiece(row, col, getThis());
+                    return;
+                }
+    
+                if (isControl)
+                {
+                    control.setSelectedPiece(getThis());
+                    setBackground(Color.YELLOW);
+                    repaint();
+                }
             }
 
-            if (isControl && Constants.gameState == GameState.PLAYER_SELECT_MOVE)
-            {
-                control.setSelectedPiece(getThis());
-                Constants.gameState = GameState.BOT_PLACE_MOVE;
-                setBackground(Color.YELLOW);
-                repaint();
-            }
+
 
         }
     }
