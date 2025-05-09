@@ -27,9 +27,6 @@ public class Bot {
         this.graph = new DecisionGraph<>(buildGraph());
     }
 
-    /**
-     * Public API: pass in the raw board, get back your chosen Move.
-     */
     public Move chooseMove() {
         BotLogic state = new BotLogic();
         return graph.decide(state);

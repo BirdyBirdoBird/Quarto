@@ -10,9 +10,6 @@ import java.util.function.Predicate;
 
 import Quarto.Bot.DecisionGraph.DecisionNode;
 
-/**
- * A generic decision graph for any type of 'T' (state) and 'R' (result/action).
- */
 public class DecisionGraph<T, R> {
 
     /**
