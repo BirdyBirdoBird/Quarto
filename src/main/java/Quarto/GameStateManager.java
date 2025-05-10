@@ -44,7 +44,7 @@ public class GameStateManager {
 
     public void game(){
         if(Constants.gameState == GameState.BOT_PLACE_MOVE){
-            frame.addPiece(bot.chooseMove());
+            
             Constants.gameState = GameState.BOT_SELECT_MOVE;
         }
         if(Constants.gameState == GameState.BOT_SELECT_MOVE){

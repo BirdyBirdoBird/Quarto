@@ -47,17 +47,39 @@ public class Bot {
         ActionNode<BotLogic,Move> anyMoveNode = new ActionNode<>(BotLogic::pickAnyMove);
 
         // 2) “Does opponent win if I play the opportunity move?” question
-        QuestionNode<BotLogic,Move> oppWinsQ =
-            new QuestionNode<>(
-                state -> {
-                    // Move m = state.findBestOpportunityMove();
-                    Move m = new Move(1, 1, 1);
-                    BotLogic.applyMove(Constants.logicBoard , m);
-                    return BotLogic.isWin();      // true → bad
-                },
-                anyMoveNode,                 // if opponent _does_ win → defense
-                oppNode                      // else → take the opportunity
-            );
+        QuestionNode<BotLogic,Move> oppWinsQ = new QuestionNode<>(
+            state -> {
+                // “pieceId” is the piece you’re forcing the bot to place right now:
+                int pieceId = Constants.currentPieceId;
+        
+                // Try every empty cell:
+                for (int r = 0; r < Constants.logicBoard.length; r++) {
+                    for (int c = 0; c < Constants.logicBoard[r].length; c++) {
+                        if (Constants.logicBoard[r][c] != 0) continue;
+        
+                        // simulate placing here
+                        Move test = new Move(r, c, pieceId);
+                        int[][] copy = BotLogic.getBoardCopy();     // deep‐clone global board
+                        BotLogic.applyMove(copy, test);
+        
+                        // now ask “will opponent win on that new board?”
+                        // assume doesOpponentWinAfter(Move) uses Constants.logicBoard internally,
+                        // so we call the overload that takes an explicit board:
+                        boolean oppWins = BotLogic.doesOpponentWinAfter(copy, test);
+        
+                        if (!oppWins) {
+                            // found at least one placement that *doesn't* let them win
+                            return false;
+                        }
+                    }
+                }
+        
+                // if we get here, *every* empty cell gives them a winning reply
+                return true;
+            },
+            anyMoveNode,  // if true → opponent always wins → fall back
+            oppNode       // if false → we found a safe “opportunity” placement
+        );
 
         // 3) Trap check
         QuestionNode<BotLogic,Move> trapQ =

@@ -17,7 +17,7 @@ import Quarto.Utils.Move;
 public class BotLogic {
 
     public static void applyMove(int[][] board, Move m) {
-        board[m.getRow()][m.getCol()] = m.getPieceId();
+        board[m.getRow()][m.getCol()] = m.getEncodedPiece();
     }
 
     /** Check whether the given board is in a winning state. */

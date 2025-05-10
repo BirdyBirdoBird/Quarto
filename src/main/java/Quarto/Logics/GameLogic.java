@@ -5,18 +5,31 @@
 package Quarto.Logics;
 
 import Quarto.Constants;
+import Quarto.Utils.Utils;
 
 public class GameLogic {
 
     private int turns;
+    private static int[][] simulatedBoard;
+
     public GameLogic() {
         Constants.logicBoard = new int[4][4]; 
+        simulatedBoard = new int[4][4];
         turns = 1;
     }
 
     public void addPiece(int row, int col, int piece) {
         //System.out.println(piece);
         Constants.logicBoard[row][col] = piece;
+    }
+
+    public static void addSimulatedPiece(int row, int col, int piece){
+        simulatedBoard = Utils.getBoardCopy();
+        simulatedBoard[row][col] = piece;
+    }
+
+    public int[][] getSimulatedBoard() {
+        return simulatedBoard;
     }
 
     public boolean isGameOver() {
