@@ -141,6 +141,7 @@ public class Control extends JFrame
 
     private void resetSelection() {
         selectionPanel.removeAll();
+        Constants.logicControl.clear();
         for (int i = 0; i < 16; i++) {
             boolean isRed = i < 8;
             boolean isBig = i % 2 == 0;
@@ -151,6 +152,7 @@ public class Control extends JFrame
             piece.addPiece(isRed, isBig, isRound, isHollow);
             piece.setControl(this);
             selectionPanel.add(piece);
+            Constants.logicControl.add(Utils.encodePiece(piece));
         }
         selectionPanel.revalidate();
         selectionPanel.repaint();

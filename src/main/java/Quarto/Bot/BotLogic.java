@@ -17,39 +17,6 @@ import java.util.Random;
 public class BotLogic {
     private static final Random RND = new Random();
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    // Helpers
-    // ─────────────────────────────────────────────────────────────────────────────
-
-    /** Apply Move m to the given board. */
-    public void applyMove(Move m) {
-        ///
-    }
-
-    /** Scan rows, cols, diags for a Quarto win. */
-    public boolean isWin(int[][] board) {
-        // TODO: implement your 4-in-a-row share-a-property check here
-        return false;
-    }
-
-    /** All empty positions on the board. */
-    private List<Position> getEmptyCells(int[][] board) {
-        List<Position> empties = new ArrayList<>();
-        for (int r = 0; r < board.length; r++) {
-            for (int c = 0; c < board[r].length; c++) {
-                if (board[r][c] == 0) {
-                    empties.add(new Position(r, c));
-                }
-            }
-        }
-        return empties;
-    }
-
-    // Simple pair to hold a row/col
-    private class Position {
-        final int row, col;
-        Position(int r, int c) { this.row = r; this.col = c; }
-    }
 
     // ─────────────────────────────────────────────────────────────────────────────
     // Placement predicates and actions

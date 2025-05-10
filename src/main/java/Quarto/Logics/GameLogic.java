@@ -37,8 +37,11 @@ public class GameLogic {
         return simulatedBoard;
     }
 
-    public boolean isGameOver() {
-        turns++;
+    public boolean isGameOver(boolean isSim) {
+        if(!isSim){
+            turns++;
+        }
+
         for (int i = 0; i < 4; i++) {
             if (checkLine(getRow(i)) || checkLine(getColumn(i))) {
                 return true;
@@ -71,7 +74,7 @@ public class GameLogic {
         return diagonal;
     }
 
-    private static boolean checkLine(int[] line) {
+    public static boolean checkLine(int[] line) {
         if (line[0] == 0) return false;
 
         int andBits = line[0] - 1;
@@ -162,7 +165,7 @@ public class GameLogic {
                     if (board[row][col] == 0) {
                         // Simulate opponent placing this piece
                         board[row][col] = candidatePiece;
-                        if (new GameLogic().isGameOver()) {
+                        if (new GameLogic().isGameOver(true)) {
                             board[row][col] = 0; // undo
 
                             // Only add once
