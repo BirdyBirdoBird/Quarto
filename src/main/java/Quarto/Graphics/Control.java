@@ -6,6 +6,7 @@
 package Quarto.Graphics;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import Quarto.Constants;
 import Quarto.Utils.Utils;
 
 public class Control extends JFrame
@@ -47,6 +49,8 @@ public class Control extends JFrame
             piece.addPiece(isRed, isBig, isRound, isHollow);
             piece.setControl(this);
             selectionPanel.add(piece);
+            
+            Constants.logicControl.add(Utils.encodePiece(piece));
         }
 
         JButton newGameButton = new JButton("New Game");
@@ -75,17 +79,35 @@ public class Control extends JFrame
         setVisible(true);
     }
 
+
+    public void findPieceFromEncoded(int encoded) {
+        for (int i = 0; i < selectionPanel.getComponentCount(); i++) {
+            Square comp = (Square) selectionPanel.getComponent(i);
+                int encodedValue = Utils.encodePiece(comp);
+                if (encodedValue == encoded) {
+                    setSelectedPiece(comp);
+                }
+        }
+    }
+
     public void setSelectedPiece (Square piece)
     {
+        if(!piece.isEmpty){
         for (int i = 0; i < 16; i++)
-        {
-            selectionPanel.getComponent(i).setBackground(Color.cyan);
-            if (selectionPanel.getComponent(i).equals(piece)) selectionPanel.getComponent(i).setBackground(Color.YELLOW);
-            selectionPanel.getComponent(i).repaint();
-        }
+            {
+                Square square = (Square) selectionPanel.getComponent(i);
+                selectionPanel.getComponent(i).setBackground(Color.cyan);
+                if (selectionPanel.getComponent(i).equals(piece)){
+                    // square.isEmpty = true;
+                    square.setBackground(Color.yellow);
+                }
+                selectionPanel.getComponent(i).repaint();
+            }
 
         selectedPiece = piece;
         selectionPanel.repaint();
+        }
+
     }
 
     public void setFrame(BoardFrame frame) {
@@ -105,6 +127,7 @@ public class Control extends JFrame
                     selectionPanel.getComponent(i).removeMouseListener(selectedPiece.getMouseClick());
                 }
             }
+            Constants.logicControl.removeFirstOccurrence(Utils.encodePiece(selectedPiece));
             selectedPiece = null;
         }
     }

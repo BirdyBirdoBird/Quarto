@@ -38,24 +38,6 @@ public class Utils {
         if (square.isHollow) bits |= 1 << 3; // bit 3
         return bits + 1; // Shift range to 1–16 instead of 0–15
     }
-    
-    public static Square decodePieceAsSquare(int pieceCode, int row, int col, BoardFrame frame) {
-        Square square = new Square(row, col, frame, false);
-
-        if (pieceCode == 0) {
-            return square; // Leave it empty
-        }
-
-        int bits = pieceCode - 1;
-
-        boolean isRed = (bits & 1) != 0;
-        boolean isBig = (bits & 2) != 0;
-        boolean isRound = (bits & 4) != 0;
-        boolean isHollow = (bits & 8) != 0;
-
-        square.addPiece(isRed, isHollow, isBig, isRound);
-        return square;
-    }
 
     public static int[][] getBoardCopy() {
         int[][] src = Constants.logicBoard;

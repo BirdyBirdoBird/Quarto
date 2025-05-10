@@ -49,7 +49,7 @@ public class GameStateManager {
             Constants.gameState = GameState.BOT_SELECT_MOVE;
         }
         if(Constants.gameState == GameState.BOT_SELECT_MOVE){
-            ///
+            control.findPieceFromEncoded(bot.choosePiece());
             Constants.gameState = GameState.PLAYER_PLACE_MOVE;
         }
     }

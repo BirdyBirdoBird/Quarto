@@ -36,7 +36,7 @@ public class Bot {
     }
 
     /** Step 2: pick & return the next piece‐ID to hand the opponent */
-    public int choosePiece(int[][] board) {
+    public int choosePiece() {
         BotLogic state = new BotLogic();
         for (Rule<BotLogic,Integer> rule : selectRules) {
             if (rule.matches(state)) {

@@ -2,6 +2,7 @@ package Quarto.Bot;
 
 import Quarto.Utils.Move;
 import Quarto.Constants;
+import Quarto.Graphics.Square;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,16 +130,63 @@ public class BotLogic {
         return avail.get(RND.nextInt(avail.size()));
     }
 
-    /** “Otherwise hand over the least‐common piece (LCP).” */
     public int selectLeastCommonPiece() {
-        List<Integer> avail = getAvailablePieces();
-        // TODO: count attributes among avail, then pick the piece whose bits are least frequent
-        return avail.get(0);
+        List<Integer> placed = getPlacedPieces();      // Encoded ints: 1–16
+        List<Integer> available = getAvailablePieces();
+        System.out.println(available.toString());
+
+        // Count how common each trait is across placed pieces
+        int[] traitCounts = new int[4]; // [Red, Big, Round, Hollow]
+
+        for (int encoded : placed) {
+            int bits = encoded - 1;
+
+            if ((bits & 1) != 0) traitCounts[0]++; // Red
+            if ((bits & (1 << 1)) != 0) traitCounts[1]++; // Big
+            if ((bits & (1 << 2)) == 0) traitCounts[2]++; // Round (inverted)
+            if ((bits & (1 << 3)) != 0) traitCounts[3]++; // Hollow
+        }
+
+        // Find available piece with *least common* trait combo
+        int minScore = Integer.MAX_VALUE;
+        int selected = available.get(0); // fallback
+
+        for (int candidate : available) {
+            int bits = candidate - 1;
+
+            int score = 0;
+            if ((bits & 1) != 0) score += traitCounts[0]; // Red
+            if ((bits & (1 << 1)) != 0) score += traitCounts[1]; // Big
+            if ((bits & (1 << 2)) == 0) score += traitCounts[2]; // Round
+            if ((bits & (1 << 3)) != 0) score += traitCounts[3]; // Hollow
+
+            if (score < minScore) {
+                minScore = score;
+                selected = candidate;
+            }
+        }
+
+        return selected;
     }
 
     /** “All pieces not yet placed on the board.” */
     public List<Integer> getAvailablePieces() {
-        return null;
+        return Constants.logicControl;
+    }
+
+    public List<Integer> getPlacedPieces() {
+        List<Integer> placed = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                int piece = Constants.logicBoard[i][j];
+                if (piece != 0) {
+                    placed.add(piece);
+                }
+            }
+        }
+
+        return placed;
     }
 }
 
