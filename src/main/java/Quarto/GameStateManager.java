@@ -20,11 +20,12 @@ import Quarto.Utils.GameState;
  * @author david
  */
 public class GameStateManager {
-    private final Bot bot = new Bot();
+    private final Bot bot;
     private final BoardFrame frame;
     private final Control control;
     private Timer timer;
     public GameStateManager(boolean isBotPlaying, StartMenu startMenu){
+        bot = new Bot();
         Constants.botPLaying = isBotPlaying;
         if(isBotPlaying){
             this.frame = new BoardFrame("player1", "bot");
@@ -44,7 +45,7 @@ public class GameStateManager {
 
     public void game(){
         if(Constants.gameState == GameState.BOT_PLACE_MOVE){
-            
+            frame.addPiece(bot.chooseMove());
             Constants.gameState = GameState.BOT_SELECT_MOVE;
         }
         if(Constants.gameState == GameState.BOT_SELECT_MOVE){

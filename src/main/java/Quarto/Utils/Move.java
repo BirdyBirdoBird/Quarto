@@ -10,11 +10,10 @@ package Quarto.Utils;
  * @author david
  */
 public class Move {
-    private final int encodedPiece, row, col;
+    private final int row, col;
 
-    public Move(int row, int col,int encodedPiece) {
+    public Move(int row, int col) {
         this.col = col;
-        this.encodedPiece = encodedPiece;
         this.row = row;
     }
 
@@ -24,10 +23,6 @@ public class Move {
 
     public int getCol() {
         return col;
-    }
-
-    public int getEncodedPiece() {
-        return encodedPiece;
     }
 
   }

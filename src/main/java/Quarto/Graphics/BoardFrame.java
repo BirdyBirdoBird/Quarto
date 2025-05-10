@@ -65,6 +65,10 @@ public class BoardFrame extends JFrame
         }
     }
 
+    public void addPiece(Move move){
+        addPiece(move.getRow(), move.getCol());
+    }
+    
     public void addPiece(int row, int col){
         addPiece(row, col, board[row][col]);
     }
