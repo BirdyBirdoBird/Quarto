@@ -3,6 +3,7 @@ package Quarto.Bot;
 import Quarto.Utils.Move;
 import Quarto.Constants;
 import Quarto.Graphics.Square;
+import Quarto.Logics.GameLogic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,12 +57,12 @@ public class BotLogic {
 
     /** “Can I win right now by placing the current piece anywhere?” */
     public boolean canWin() {
-        return false;
+        return GameLogic.getWinningMove() != null;
     }
 
     /** “Place the current piece so I win immediately.” */
     public Move makeWinningMove() {
-        return null;
+        return GameLogic.getWinningMove();
     }
 
     /** “Can I block the opponent’s immediate win?” */

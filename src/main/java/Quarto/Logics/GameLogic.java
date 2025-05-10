@@ -4,7 +4,12 @@
  */
 package Quarto.Logics;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import Quarto.Constants;
+import Quarto.Utils.Move;
 import Quarto.Utils.Utils;
 
 public class GameLogic {
@@ -46,11 +51,11 @@ public class GameLogic {
         return turns == 16;
     }
 
-    private int[] getRow(int row) {
+    public static int[] getRow(int row) {
         return Constants.logicBoard[row];
     }
 
-    private int[] getColumn(int col) {
+    public static int[] getColumn(int col) {
         int[] column = new int[4];
         for (int i = 0; i < 4; i++) {
             column[i] = Constants.logicBoard[i][col];
@@ -58,7 +63,7 @@ public class GameLogic {
         return column;
     }
 
-    private int[] getDiagonal(boolean main) {
+    public static int[] getDiagonal(boolean main) {
         int[] diagonal = new int[4];
         for (int i = 0; i < 4; i++) {
             diagonal[i] = main ? Constants.logicBoard[i][i] : Constants.logicBoard[i][3 - i];
@@ -66,24 +71,115 @@ public class GameLogic {
         return diagonal;
     }
 
-    private boolean checkLine(int[] line) {
+    private static boolean checkLine(int[] line) {
         if (line[0] == 0) return false;
-    
+
         int andBits = line[0] - 1;
         int orBits = line[0] - 1;
-    
+
         for (int i = 1; i < line.length; i++) {
             if (line[i] == 0) return false;
-    
+
             int pieceBits = line[i] - 1;
             andBits &= pieceBits;
             orBits |= pieceBits;
         }
-    
+
         return (andBits | ~orBits & 0b1111) != 0;
     }
-    
+
     public void removePiece(int i, int j){
         Constants.logicBoard[i][j] = 0;
     }
+
+    public static boolean checkLineWithPiece(int[] line, int newPieceBits) {
+        int[] lineCopy = Arrays.copyOf(line, 4);
+
+        for (int i = 0; i < 4; i++) {
+            if (lineCopy[i] == 0) {
+                lineCopy[i] = newPieceBits + 1; // simulate placing the piece (encoded 1–16)
+                if (checkLine(lineCopy)) return true;
+                lineCopy[i] = 0; // reset
+            }
+        }
+
+        return false;
+    }
+
+    public static Move getWinningMove() {
+        int currentPiece = Constants.logicControl.getFirst();
+        int pieceBits = currentPiece - 1;
+
+        for (int row = 0; row < 4; row++) {
+            int[] line = getRow(row);
+            if (canWinInLine(line, pieceBits)) {
+                int col = findEmptyInLine(line);
+                return new Move(row, col);
+            }
+
+            line = getColumn(row);
+            if (canWinInLine(line, pieceBits)) {
+                int col = row;
+                int rowIndex = findEmptyInLine(line);
+                return new Move(rowIndex, col);
+            }
+        }
+
+
+        int[] diag1 = getDiagonal(true);
+        if (canWinInLine(diag1, pieceBits)) {
+            int idx = findEmptyInLine(diag1);
+            return new Move(idx, idx);
+        }
+
+        int[] diag2 = getDiagonal(false);
+        if (canWinInLine(diag2, pieceBits)) {
+            int idx = findEmptyInLine(diag2);
+            return new Move(idx, 3 - idx);
+        }
+
+        return null;
+    }
+
+    private static boolean canWinInLine(int[] line, int pieceBits) {
+        return checkLineWithPiece(line, pieceBits);
+    }
+
+    private static int findEmptyInLine(int[] line) {
+        for (int i = 0; i < 4; i++) {
+            if (line[i] == 0) return i;
+        }
+        return -1; // Should never happen if line is winning
+    }
+
+    public static List<Integer> getDangerousPieces() {
+        List<Integer> dangerous = new ArrayList<>();
+        int[][] board = Constants.logicBoard;
+
+        for (int candidatePiece : Constants.logicControl) {
+            for (int row = 0; row < 4; row++) {
+                for (int col = 0; col < 4; col++) {
+                    if (board[row][col] == 0) {
+                        // Simulate opponent placing this piece
+                        board[row][col] = candidatePiece;
+                        if (new GameLogic().isGameOver()) {
+                            board[row][col] = 0; // undo
+
+                            // Only add once
+                            if (!dangerous.contains(candidatePiece)) {
+                                dangerous.add(candidatePiece);
+                            }
+
+                            break; // No need to check more positions for this piece
+                        }
+                        board[row][col] = 0; // undo
+                    }
+                }
+            }
+        }
+
+        return dangerous;
+    }
+
+
 }
