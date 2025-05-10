@@ -3,6 +3,7 @@ package Quarto.Bot;
 import Quarto.Utils.Move;
 import Quarto.Constants;
 import Quarto.Graphics.Square;
+import Quarto.Logics.GameLogic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,25 +57,43 @@ public class BotLogic {
 
     /** “Can I win right now by placing the current piece anywhere?” */
     public boolean canWin() {
-        return false;
+        return GameLogic.getWinningMove() != null;
     }
 
     /** “Place the current piece so I win immediately.” */
     public Move makeWinningMove() {
-        return null;
+        return GameLogic.getWinningMove();
     }
 
     /** “Can I block the opponent’s immediate win?” */
     public boolean canBlockOpponent() {
-        // TODO: you’ll need to know which piece the *opponent* will get next,
-        // then simulate exactly like canWin() but for their piece.
-        return false;
+        return !GameLogic.getDangerousPieces().isEmpty();
     }
 
     /** “Place the current piece to block their win.” */
     public Move makeBlockingMove() {
-        // TODO: same loop as makeWinningMove(), but looking for their win-spots
-        return pickAnyMove();
+        List<Integer> threats = GameLogic.getDangerousPieces();
+        int[][] board = Constants.logicBoard;
+        System.out.println("BLOCKING");
+        for (int threatPiece : threats) {
+            for (int row = 0; row < 4; row++) {
+                for (int col = 0; col < 4; col++) {
+                    if (board[row][col] == 0) {
+                        // Simulate opponent placing the threat piece
+                        board[row][col] = threatPiece;
+                        if (new GameLogic().isGameOver()) {
+                            board[row][col] = 0; // Undo
+
+                            // Now *you* place your own piece there to block
+                            return new Move(row, col);
+                        }
+                        board[row][col] = 0; // Undo
+                    }
+                }
+            }
+        }
+
+        return pickAnyMove(); // No block needed, fallback
     }
 
     /** “Can I set up a trap (i.e. a move that leaves them no safe reply)?” */
@@ -96,7 +115,6 @@ public class BotLogic {
         return null;
     }
 
-    /** “I’ve run out of smarter ideas—just pick any random empty spot.” */
     public Move pickAnyMove() {
         Random r = new Random();
         int row, col;
@@ -107,7 +125,7 @@ public class BotLogic {
             col = r.nextInt(0,4);
         } while (Constants.logicBoard[row][col] != 0);
     
-        System.out.printf("pickAnyMove (%d,%d)%n", row, col);
+        System.out.printf("picking Any Move (%d,%d)%n", row, col);
     
         // use the piece you were given (replace `currentPieceId` with your actual field)
         return new Move(row, col);

@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import Quarto.Constants;
 import Quarto.Logics.GameLogic;
 import Quarto.Utils.Move;
 import Quarto.Utils.Utils;
@@ -94,7 +95,6 @@ public class BoardFrame extends JFrame
 
         board = new Square[4][4];
         gameLogic = new GameLogic();
-
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 int row = i;

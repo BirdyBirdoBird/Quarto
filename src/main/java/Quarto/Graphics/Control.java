@@ -100,6 +100,7 @@ public class Control extends JFrame
                 if (selectionPanel.getComponent(i).equals(piece)){
                     // square.isEmpty = true;
                     square.setBackground(Color.yellow);
+                    prioritizePiece(Utils.encodePiece(square));
                 }
                 selectionPanel.getComponent(i).repaint();
             }
@@ -108,6 +109,12 @@ public class Control extends JFrame
         selectionPanel.repaint();
         }
 
+    }
+
+    public static void prioritizePiece(int piece) {
+    // Remove it first (if present), then re-add to front
+        Constants.logicControl.removeFirstOccurrence(piece);
+        Constants.logicControl.addFirst(piece);
     }
 
     public void setFrame(BoardFrame frame) {
