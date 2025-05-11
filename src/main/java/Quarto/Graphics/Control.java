@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import Quarto.Constants;
+import Quarto.Utils.GameState;
 import Quarto.Utils.Utils;
 
 public class Control extends JFrame
@@ -58,6 +59,7 @@ public class Control extends JFrame
         newGameButton.addActionListener(e -> {
             this.frame.resetBoard();
             resetSelection();
+            Constants.gameState = GameState.PLAYER_SELECT_MOVE;
         });
 
         JButton backToMenuButton = new JButton("Back to Menu");
