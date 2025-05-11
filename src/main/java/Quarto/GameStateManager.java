@@ -26,7 +26,7 @@ public class GameStateManager {
     private Timer timer;
     public GameStateManager(boolean isBotPlaying, StartMenu startMenu){
         bot = new Bot();
-        Constants.botPLaying = isBotPlaying;
+        Globals.botPLaying = isBotPlaying;
         if(isBotPlaying){
             this.frame = new BoardFrame("player1", "bot");
         }
@@ -37,20 +37,20 @@ public class GameStateManager {
         this.control = new Control(frame, startMenu);
         timer = new Timer(1000, (ActionEvent e) -> {
             // ((Timer) e.getSource()).stop();
-            System.out.println(Constants.gameState);
+            System.out.println(Globals.gameState);
             game(); // proceed to player's turn
         });
         timer.start();
     }
 
     public void game(){
-        if(Constants.gameState == GameState.BOT_PLACE_MOVE){
+        if(Globals.gameState == GameState.BOT_PLACE_MOVE){
             frame.addPiece(bot.chooseMove());
-            Constants.gameState = GameState.BOT_SELECT_MOVE;
+            Globals.gameState = GameState.BOT_SELECT_MOVE;
         }
-        if(Constants.gameState == GameState.BOT_SELECT_MOVE){
+        if(Globals.gameState == GameState.BOT_SELECT_MOVE){
             control.findPieceFromEncoded(bot.choosePiece());
-            Constants.gameState = GameState.PLAYER_PLACE_MOVE;
+            Globals.gameState = GameState.PLAYER_PLACE_MOVE;
         }
     }
     

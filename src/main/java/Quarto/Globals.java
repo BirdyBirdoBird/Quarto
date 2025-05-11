@@ -13,7 +13,7 @@ import Quarto.Utils.GameState;
  *
  * @author david
  */
-public class Constants {
+public class Globals {
     public static GameState gameState = GameState.PLAYER_SELECT_MOVE;
     public static boolean botPLaying = false;
     public static int[][] logicBoard;

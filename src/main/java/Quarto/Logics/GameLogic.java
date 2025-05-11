@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import Quarto.Constants;
+import Quarto.Globals;
 import Quarto.Utils.Move;
 import Quarto.Utils.Utils;
 
@@ -18,14 +18,14 @@ public class GameLogic {
     private static int[][] simulatedBoard;
 
     public GameLogic() {
-        Constants.logicBoard = new int[4][4]; 
+        Globals.logicBoard = new int[4][4]; 
         simulatedBoard = new int[4][4];
         turns = 1;
     }
 
     public void addPiece(int row, int col, int piece) {
         //System.out.println(piece);
-        Constants.logicBoard[row][col] = piece;
+        Globals.logicBoard[row][col] = piece;
     }
 
     public static void addSimulatedPiece(int row, int col, int piece){
@@ -55,13 +55,13 @@ public class GameLogic {
     }
 
     public static int[] getRow(int row) {
-        return Constants.logicBoard[row];
+        return Globals.logicBoard[row];
     }
 
     public static int[] getColumn(int col) {
         int[] column = new int[4];
         for (int i = 0; i < 4; i++) {
-            column[i] = Constants.logicBoard[i][col];
+            column[i] = Globals.logicBoard[i][col];
         }
         return column;
     }
@@ -69,7 +69,7 @@ public class GameLogic {
     public static int[] getDiagonal(boolean main) {
         int[] diagonal = new int[4];
         for (int i = 0; i < 4; i++) {
-            diagonal[i] = main ? Constants.logicBoard[i][i] : Constants.logicBoard[i][3 - i];
+            diagonal[i] = main ? Globals.logicBoard[i][i] : Globals.logicBoard[i][3 - i];
         }
         return diagonal;
     }
@@ -92,7 +92,7 @@ public class GameLogic {
     }
 
     public void removePiece(int i, int j){
-        Constants.logicBoard[i][j] = 0;
+        Globals.logicBoard[i][j] = 0;
     }
 
     public static boolean checkLineWithPiece(int[] line, int newPieceBits) {
@@ -110,7 +110,7 @@ public class GameLogic {
     }
 
     public static Move getWinningMove() {
-        int currentPiece = Constants.logicControl.getFirst();
+        int currentPiece = Globals.logicControl.getFirst();
         int pieceBits = currentPiece - 1;
 
         for (int row = 0; row < 4; row++) {
@@ -157,9 +157,9 @@ public class GameLogic {
 
     public static List<Integer> getDangerousPieces() {
         List<Integer> dangerous = new ArrayList<>();
-        int[][] board = Constants.logicBoard;
+        int[][] board = Globals.logicBoard;
 
-        for (int candidatePiece : Constants.logicControl) {
+        for (int candidatePiece : Globals.logicControl) {
             for (int row = 0; row < 4; row++) {
                 for (int col = 0; col < 4; col++) {
                     if (board[row][col] == 0) {
@@ -186,7 +186,7 @@ public class GameLogic {
     }
 
     public static List<Integer> getSafePieces() {
-        List<Integer> allAvailable = new ArrayList<>(Constants.logicControl);
+        List<Integer> allAvailable = new ArrayList<>(Globals.logicControl);
         List<Integer> dangerous = GameLogic.getDangerousPieces();
 
         List<Integer> safe = new ArrayList<>();
@@ -201,8 +201,8 @@ public class GameLogic {
     }
 
     public static Move getOpportunityMove() {
-        int[][] board = Constants.logicBoard;
-        int myPiece = Constants.logicControl.getFirst();
+        int[][] board = Globals.logicBoard;
+        int myPiece = Globals.logicControl.getFirst();
 
         Move bestMove = null;
         int bestScore = -1;
@@ -264,7 +264,7 @@ public class GameLogic {
     }
 
     public static int[] countSharedTraitsIn3AlignedLines(int row, int col) {
-        int[][] board = Constants.logicBoard;
+        int[][] board = Globals.logicBoard;
 
         int[][] lines = {
             board[row],

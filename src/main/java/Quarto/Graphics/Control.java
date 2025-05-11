@@ -16,7 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import Quarto.Constants;
+import Quarto.Globals;
 import Quarto.Utils.GameState;
 import Quarto.Utils.Utils;
 
@@ -51,7 +51,7 @@ public class Control extends JFrame
             piece.setControl(this);
             selectionPanel.add(piece);
             
-            Constants.logicControl.add(Utils.encodePiece(piece));
+            Globals.logicControl.add(Utils.encodePiece(piece));
         }
 
         JButton newGameButton = new JButton("New Game");
@@ -59,7 +59,7 @@ public class Control extends JFrame
         newGameButton.addActionListener(e -> {
             this.frame.resetBoard();
             resetSelection();
-            Constants.gameState = GameState.PLAYER_SELECT_MOVE;
+            Globals.gameState = GameState.PLAYER_SELECT_MOVE;
         });
 
         JButton backToMenuButton = new JButton("Back to Menu");
@@ -115,8 +115,8 @@ public class Control extends JFrame
 
     public static void prioritizePiece(int piece) {
         // Remove it first (if present), then re-add to front
-        Constants.logicControl.removeFirstOccurrence(piece);
-        Constants.logicControl.addFirst(piece);
+        Globals.logicControl.removeFirstOccurrence(piece);
+        Globals.logicControl.addFirst(piece);
     }
 
     public void setFrame(BoardFrame frame) {
@@ -136,14 +136,14 @@ public class Control extends JFrame
                     selectionPanel.getComponent(i).removeMouseListener(selectedPiece.getMouseClick());
                 }
             }
-            Constants.logicControl.removeFirstOccurrence(Utils.encodePiece(selectedPiece));
+            Globals.logicControl.removeFirstOccurrence(Utils.encodePiece(selectedPiece));
             selectedPiece = null;
         }
     }
 
     private void resetSelection() {
         selectionPanel.removeAll();
-        Constants.logicControl.clear();
+        Globals.logicControl.clear();
         for (int i = 0; i < 16; i++) {
             boolean isRed = i < 8;
             boolean isBig = i % 2 == 0;
@@ -154,7 +154,7 @@ public class Control extends JFrame
             piece.addPiece(isRed, isBig, isRound, isHollow);
             piece.setControl(this);
             selectionPanel.add(piece);
-            Constants.logicControl.add(Utils.encodePiece(piece));
+            Globals.logicControl.add(Utils.encodePiece(piece));
         }
         selectionPanel.revalidate();
         selectionPanel.repaint();

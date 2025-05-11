@@ -1,7 +1,7 @@
 package Quarto.Bot;
 
 import Quarto.Utils.Move;
-import Quarto.Constants;
+import Quarto.Globals;
 import Quarto.Graphics.Square;
 import Quarto.Logics.GameLogic;
 
@@ -36,10 +36,10 @@ public class BotLogic {
 
     /** “Can I block the opponent’s immediate win?” */
     public boolean canBlockOpponent() {
-        int myPiece = Constants.logicControl.getFirst();
+        int myPiece = Globals.logicControl.getFirst();
 
         // Simulate removing the piece I'm about to play
-        LinkedList<Integer> remaining = new LinkedList<>(Constants.logicControl);
+        LinkedList<Integer> remaining = new LinkedList<>(Globals.logicControl);
         remaining.remove(Integer.valueOf(myPiece));
 
         // Now check: are there any safe pieces left?
@@ -58,8 +58,8 @@ public class BotLogic {
 
     /** “Place the current piece to block their win.” */
     public Move makeBlockingMove() {
-        int[][] board = Constants.logicBoard;
-        int myPiece = Constants.logicControl.getFirst();
+        int[][] board = Globals.logicBoard;
+        int myPiece = Globals.logicControl.getFirst();
         List<Integer> dangerous = GameLogic.getDangerousPieces();
 
         // Get all empty squares
@@ -100,14 +100,14 @@ public class BotLogic {
 
     /** “Can I set up a trap (i.e. a move that leaves them no safe reply)?” */
     public boolean canSetUpTrap() {
-        int[][] board = Constants.logicBoard;
-        int myPiece = Constants.logicControl.getFirst();
+        int[][] board = Globals.logicBoard;
+        int myPiece = Globals.logicControl.getFirst();
 
         // Precompute: for each trait (bit 0–3), how many remaining pieces do NOT have that trait
         Map<Integer, Integer> safePieceCountPerTrait = new HashMap<>();
         for (int bit = 0; bit < 4; bit++) safePieceCountPerTrait.put(bit, 0);
 
-        List<Integer> remaining = new ArrayList<>(Constants.logicControl);
+        List<Integer> remaining = new ArrayList<>(Globals.logicControl);
         remaining.remove(Integer.valueOf(myPiece));
 
         for (int piece : remaining) {
@@ -145,14 +145,14 @@ public class BotLogic {
 
     /** “Place the current piece in a trapping spot.” */
     public Move makeTrappingMove() {
-        int[][] board = Constants.logicBoard;
-        int myPiece = Constants.logicControl.getFirst();
+        int[][] board = Globals.logicBoard;
+        int myPiece = Globals.logicControl.getFirst();
 
         // Recompute safe trait availability
         Map<Integer, Integer> safeTraitCount = new HashMap<>();
         for (int bit = 0; bit < 4; bit++) safeTraitCount.put(bit, 0);
 
-        List<Integer> remaining = new ArrayList<>(Constants.logicControl);
+        List<Integer> remaining = new ArrayList<>(Globals.logicControl);
         remaining.remove(Integer.valueOf(myPiece));
 
         for (int piece : remaining) {
@@ -204,7 +204,7 @@ public class BotLogic {
             // board is 4×4, so indices 0–3
             row = r.nextInt(0,4);
             col = r.nextInt(0,4);
-        } while (Constants.logicBoard[row][col] != 0);
+        } while (Globals.logicBoard[row][col] != 0);
     
         System.out.printf("picking Any Move (%d,%d)%n", row, col);
     
@@ -302,7 +302,7 @@ public class BotLogic {
 
     /** “All pieces not yet placed on the board.” */
     public List<Integer> getAvailablePieces() {
-        return Constants.logicControl;
+        return Globals.logicControl;
     }
 
     private List<Integer> getPlacedPieces() {
@@ -310,7 +310,7 @@ public class BotLogic {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                int piece = Constants.logicBoard[i][j];
+                int piece = Globals.logicBoard[i][j];
                 if (piece != 0) {
                     placed.add(piece);
                 }

@@ -5,7 +5,7 @@
 
 package Quarto.Utils;
 
-import Quarto.Constants;
+import Quarto.Globals;
 import Quarto.Graphics.BoardFrame;
 import Quarto.Graphics.Square;
 
@@ -40,7 +40,7 @@ public class Utils {
     }
 
     public static int[][] getBoardCopy() {
-        int[][] src = Constants.logicBoard;
+        int[][] src = Globals.logicBoard;
         int[][] copy = new int[src.length][];
         for (int i = 0; i < src.length; i++) {
             copy[i] = src[i].clone();
