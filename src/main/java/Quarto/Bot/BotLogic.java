@@ -64,6 +64,14 @@ public class BotLogic {
         return null;
     }
 
+    public Move mostOpportunities() {
+        Move best = GameLogic.getOpportunityMove();
+        if (best != null) {
+            System.out.println("picking best move");
+        }
+        return best != null ? best : pickAnyMove();
+    }
+
     /** “I’ve run out of smarter ideas—just pick any random empty spot.” */
     public Move pickAnyMove() {
         Random r = new Random();
@@ -120,14 +128,15 @@ public class BotLogic {
         int selected = available.get(0); // fallback
 
         for (int candidate : available) {
+                
             int bits = candidate - 1;
-
+            
             int score = 0;
             if ((bits & 1) != 0) score += traitCounts[0]; // Red
             if ((bits & (1 << 1)) != 0) score += traitCounts[1]; // Big
             if ((bits & (1 << 2)) == 0) score += traitCounts[2]; // Round
             if ((bits & (1 << 3)) != 0) score += traitCounts[3]; // Hollow
-
+            
             if (score < minScore) {
                 minScore = score;
                 selected = candidate;

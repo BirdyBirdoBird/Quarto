@@ -47,4 +47,13 @@ public class Utils {
         }
         return copy;
     }
+
+    public static void printMatrix(int[][] matrix) {
+    for (int[] row : matrix) {
+        for (int value : row) {
+            System.out.print(value + " ");
+        }
+        System.out.println(); // Move to the next line after each row
+    }
+}
 }

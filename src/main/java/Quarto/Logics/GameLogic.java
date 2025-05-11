@@ -163,19 +163,20 @@ public class GameLogic {
             for (int row = 0; row < 4; row++) {
                 for (int col = 0; col < 4; col++) {
                     if (board[row][col] == 0) {
-                        // Simulate opponent placing this piece
+                        // Simulate
                         board[row][col] = candidatePiece;
-                        if (new GameLogic().isGameOver(true)) {
-                            board[row][col] = 0; // undo
 
-                            // Only add once
-                            if (!dangerous.contains(candidatePiece)) {
-                                dangerous.add(candidatePiece);
-                            }
+                        boolean rowWin = GameLogic.checkLine(GameLogic.getRow(row));
+                        boolean colWin = GameLogic.checkLine(GameLogic.getColumn(col));
+                        boolean diag1Win = (row == col) && GameLogic.checkLine(GameLogic.getDiagonal(true));
+                        boolean diag2Win = (row + col == 3) && GameLogic.checkLine(GameLogic.getDiagonal(false));
 
+                        board[row][col] = 0; // undo
+
+                        if (rowWin || colWin || diag1Win || diag2Win) {
+                            dangerous.add(candidatePiece);
                             break; // No need to check more positions for this piece
                         }
-                        board[row][col] = 0; // undo
                     }
                 }
             }
@@ -185,4 +186,67 @@ public class GameLogic {
     }
 
 
+
+    public static Move getOpportunityMove() {
+        int[][] board = Constants.logicBoard;
+        int myPiece = Constants.logicControl.getFirst();
+
+        Move bestMove = null;
+        int bestScore = -1;
+
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (board[row][col] == 0) {
+                    int score = scoreMultiOpportunities(board, row, col, myPiece);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = new Move(row, col);
+                    }
+                }
+            }
+        }
+
+        return bestMove;
+    }
+
+    public static int scoreMultiOpportunities(int[][] board, int row, int col, int piece) {
+        int score = 0;
+
+        board[row][col] = piece; // simulate
+
+        int[][] lines = {
+            board[row],                             // Row
+            getColumn(col),                  // Column
+            (row == col) ? getDiagonal(true) : null,
+            (row + col == 3) ? getDiagonal(false) : null
+        };
+
+        for (int[] line : lines) {
+            if (line == null) continue;
+
+            int traitCount = countSharedTrait(line);
+            if (traitCount >= 2 && traitCount < 4) {
+                score += traitCount; // add more for longer sequences
+            }
+        }
+
+        board[row][col] = 0; // undo
+        return score;
+    }
+
+    private static int countSharedTrait(int[] line) {
+        int andBits = -1;
+        int orNotBits = ~0;
+        int filled = 0;
+
+        for (int val : line) {
+            if (val == 0) continue;
+            int bits = val - 1;
+            andBits &= bits;
+            orNotBits &= ~bits;
+            filled++;
+        }
+
+        return ((andBits | orNotBits) != 0) ? filled : 0;
+    }
 }

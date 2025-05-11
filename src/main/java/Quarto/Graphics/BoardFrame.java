@@ -116,7 +116,7 @@ public class BoardFrame extends JFrame
             isGameOver = true;
         }
         if (gameLogic.isGameOver(false)) {
-            JOptionPane.showMessageDialog(this, "Game Over! " + ((isOneWin) ? name1 : name2) + " Won!","Alert", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Game Over! " + ((isOneWin) ? name2 : name1) + " Won!","Alert", JOptionPane.INFORMATION_MESSAGE);
             isGameOver = true;
         }
     }

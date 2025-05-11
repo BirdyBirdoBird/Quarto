@@ -14,7 +14,7 @@ public class Bot {
             new Rule<BotLogic,Move>( BotLogic::canBlockOpponent, BotLogic::makeBlockingMove ),
             new Rule<BotLogic,Move>( BotLogic::canSetUpTrap, BotLogic::makeTrappingMove),
             // fallback always matches:
-            new Rule<BotLogic,Move>( state -> true, BotLogic::pickAnyMove)
+            new Rule<BotLogic,Move>( state -> true, BotLogic::mostOpportunities)
         );
 
         // 3) Same idea for piece‐selection rules (S=BotLogic, R=Integer piece‐ID)
