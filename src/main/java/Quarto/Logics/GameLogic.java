@@ -263,5 +263,42 @@ public class GameLogic {
         return ((andBits | orNotBits) != 0) ? filled : 0;
     }
 
-    
+    public static int[] countSharedTraitsIn3AlignedLines(int row, int col) {
+        int[][] board = Constants.logicBoard;
+
+        int[][] lines = {
+            board[row],
+            GameLogic.getColumn(col),
+            (row == col) ? GameLogic.getDiagonal(true) : null,
+            (row + col == 3) ? GameLogic.getDiagonal(false) : null
+        };
+
+        int[] traitMatches = new int[4];
+
+        for (int[] line : lines) {
+            if (line == null) continue;
+
+            int filled = 0;
+            int andBits = -1;
+            int orNotBits = ~0;
+
+            for (int val : line) {
+                if (val == 0) continue;
+                int bits = val - 1;
+                andBits &= bits;
+                orNotBits &= ~bits;
+                filled++;
+            }
+
+            if (filled == 3 && ((andBits | orNotBits) & 0b1111) != 0) {
+                for (int bit = 0; bit < 4; bit++) {
+                    boolean shared = ((andBits >> bit) & 1) == 1 || ((orNotBits >> bit) & 1) == 1;
+                    if (shared) traitMatches[bit]++;
+                }
+            }
+        }
+
+        return traitMatches;
+    }
+
 }

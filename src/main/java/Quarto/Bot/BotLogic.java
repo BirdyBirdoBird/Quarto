@@ -6,8 +6,10 @@ import Quarto.Graphics.Square;
 import Quarto.Logics.GameLogic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -16,8 +18,7 @@ import java.util.Random;
  * and Constants.currentPieceId.
  */
 public class BotLogic {
-    private static final Random RND = new Random();
-
+    private boolean justTrapped = false;
 
     // ─────────────────────────────────────────────────────────────────────────────
     // Placement predicates and actions
@@ -99,22 +100,92 @@ public class BotLogic {
 
     /** “Can I set up a trap (i.e. a move that leaves them no safe reply)?” */
     public boolean canSetUpTrap() {
+        int[][] board = Constants.logicBoard;
+        int myPiece = Constants.logicControl.getFirst();
+
+        // Precompute: for each trait (bit 0–3), how many remaining pieces do NOT have that trait
+        Map<Integer, Integer> safePieceCountPerTrait = new HashMap<>();
+        for (int bit = 0; bit < 4; bit++) safePieceCountPerTrait.put(bit, 0);
+
+        List<Integer> remaining = new ArrayList<>(Constants.logicControl);
+        remaining.remove(Integer.valueOf(myPiece));
+
+        for (int piece : remaining) {
+            int bits = piece - 1;
+            for (int bit = 0; bit < 4; bit++) {
+                if (((bits >> bit) & 1) == 0) {
+                    safePieceCountPerTrait.put(bit, safePieceCountPerTrait.get(bit) + 1);
+                }
+            }
+        }
+
+        // Scan each empty square
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (board[row][col] != 0) continue;
+
+                board[row][col] = myPiece;
+
+                int[] traitMatches = GameLogic.countSharedTraitsIn3AlignedLines(row, col);
+
+                board[row][col] = 0; // Undo
+
+                for (int bit = 0; bit < 4; bit++) {
+                    if (traitMatches[bit] >= 2 && safePieceCountPerTrait.get(bit) > 0) {
+                        return true; // Valid trap found
+                    }
+                }
+            }
+        }
+        System.out.println("Can't Trap");
         return false;
     }
 
+
+
     /** “Place the current piece in a trapping spot.” */
     public Move makeTrappingMove() {
-        Move trap = findSafeOpportunityMove();
-        return (trap != null) ? trap : pickAnyMove();
+        int[][] board = Constants.logicBoard;
+        int myPiece = Constants.logicControl.getFirst();
+
+        // Recompute safe trait availability
+        Map<Integer, Integer> safeTraitCount = new HashMap<>();
+        for (int bit = 0; bit < 4; bit++) safeTraitCount.put(bit, 0);
+
+        List<Integer> remaining = new ArrayList<>(Constants.logicControl);
+        remaining.remove(Integer.valueOf(myPiece));
+
+        for (int piece : remaining) {
+            int bits = piece - 1;
+            for (int bit = 0; bit < 4; bit++) {
+                if (((bits >> bit) & 1) == 0) {
+                    safeTraitCount.put(bit, safeTraitCount.get(bit) + 1);
+                }
+            }
+        }
+
+        // Now search for the first move that forms a trap
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (board[row][col] != 0) continue;
+
+                board[row][col] = myPiece;
+                int[] traitMatches = GameLogic.countSharedTraitsIn3AlignedLines(row, col);
+                board[row][col] = 0;
+
+                for (int bit = 0; bit < 4; bit++) {
+                    if (traitMatches[bit] >= 2 && safeTraitCount.get(bit) > 0) {
+                        justTrapped = true;
+                        return new Move(row, col);
+                    }
+                }
+            }
+        }
+
+        // Should never happen since canSetUpTrap() was true
+        throw new IllegalStateException("Expected a trap move but none found.");
     }
 
-    /**
-     * “Find me one spot where, after I place, the opponent has *no* winning reply.”
-     * Returns null if every placement lets them win.
-     */
-    public Move findSafeOpportunityMove() {
-        return null;
-    }
 
     public Move mostOpportunities() {
         Move best = GameLogic.getOpportunityMove();
@@ -148,14 +219,45 @@ public class BotLogic {
 
     /** “Was my last move a trap?” (you’d set this flag in your manager) */
     public boolean justSetTrap() {
-        return false;
+        boolean result = justTrapped;
+        justTrapped = false; // reset after one use
+        return result;
     }
 
-    /** “If I just trapped them, hand over a piece that continues pressure.” */
-    public int selectTrappingPiece() {
-        List<Integer> avail = getAvailablePieces();
-        // simple: pick randomly, or implement your own heuristic
-        return avail.get(RND.nextInt(avail.size()));
+    public Integer selectTrappingPiece() {
+        List<Integer> available = getAvailablePieces(); // from Constants.logicControl
+
+        // For each bit (trait), count how many pieces have it
+        int[] traitCount = new int[4];
+        for (int piece : available) {
+            int bits = piece - 1;
+            for (int bit = 0; bit < 4; bit++) {
+                if (((bits >> bit) & 1) == 1) {
+                    traitCount[bit]++;
+                }
+            }
+        }
+
+        // Find the most common trait (likely the trap trait)
+        int trapBit = 0;
+        int max = 0;
+        for (int bit = 0; bit < 4; bit++) {
+            if (traitCount[bit] > max) {
+                max = traitCount[bit];
+                trapBit = bit;
+            }
+        }
+
+        // Pick the first piece that does NOT have the trap trait
+        for (int piece : available) {
+            int bits = piece - 1;
+            if (((bits >> trapBit) & 1) == 0) {
+                return piece; // safe to give
+            }
+        }
+
+        // If no such piece exists, pick any (we're forced)
+        return available.get(0);
     }
 
     public int selectLeastCommonPiece() {

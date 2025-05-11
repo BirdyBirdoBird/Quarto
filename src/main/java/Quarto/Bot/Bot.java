@@ -19,8 +19,8 @@ public class Bot {
 
         // 3) Same idea for piece‐selection rules (S=BotLogic, R=Integer piece‐ID)
         this.selectRules = List.of(
-            new Rule<BotLogic,Integer>( BotLogic::justSetTrap,       BotLogic::selectTrappingPiece ),
-            new Rule<BotLogic,Integer>( state -> true,               BotLogic::selectLeastCommonPiece )
+            new Rule<BotLogic,Integer>( BotLogic::justSetTrap, BotLogic::selectTrappingPiece),
+            new Rule<BotLogic,Integer>( state -> true, BotLogic::selectLeastCommonPiece )
         );
     }
 
