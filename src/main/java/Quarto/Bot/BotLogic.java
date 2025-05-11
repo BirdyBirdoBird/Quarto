@@ -109,6 +109,7 @@ public class BotLogic {
     public int selectLeastCommonPiece() {
         List<Integer> placed = getPlacedPieces();      // Encoded ints: 1–16
         List<Integer> available = getAvailablePieces();
+        List<Integer> unsafePieces = GameLogic.getDangerousPieces();
         System.out.println(available.toString());
 
         // Count how common each trait is across placed pieces
@@ -128,18 +129,20 @@ public class BotLogic {
         int selected = available.get(0); // fallback
 
         for (int candidate : available) {
+            if (!unsafePieces.contains(candidate)) {
                 
-            int bits = candidate - 1;
-            
-            int score = 0;
-            if ((bits & 1) != 0) score += traitCounts[0]; // Red
-            if ((bits & (1 << 1)) != 0) score += traitCounts[1]; // Big
-            if ((bits & (1 << 2)) == 0) score += traitCounts[2]; // Round
-            if ((bits & (1 << 3)) != 0) score += traitCounts[3]; // Hollow
-            
-            if (score < minScore) {
-                minScore = score;
-                selected = candidate;
+                int bits = candidate - 1;
+                
+                int score = 0;
+                if ((bits & 1) != 0) score += traitCounts[0]; // Red
+                if ((bits & (1 << 1)) != 0) score += traitCounts[1]; // Big
+                if ((bits & (1 << 2)) == 0) score += traitCounts[2]; // Round
+                if ((bits & (1 << 3)) != 0) score += traitCounts[3]; // Hollow
+                
+                if (score < minScore) {
+                    minScore = score;
+                    selected = candidate;
+                }
             }
         }
 
