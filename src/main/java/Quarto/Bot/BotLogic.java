@@ -6,6 +6,7 @@ import Quarto.Graphics.Square;
 import Quarto.Logics.GameLogic;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -34,14 +35,65 @@ public class BotLogic {
 
     /** “Can I block the opponent’s immediate win?” */
     public boolean canBlockOpponent() {
-        // TODO: you’ll need to know which piece the *opponent* will get next,
-        // then simulate exactly like canWin() but for their piece.
-        return false;
+        int myPiece = Constants.logicControl.getFirst();
+
+        // Simulate removing the piece I'm about to play
+        LinkedList<Integer> remaining = new LinkedList<>(Constants.logicControl);
+        remaining.remove(Integer.valueOf(myPiece));
+
+        // Now check: are there any safe pieces left?
+        List<Integer> dangerous = GameLogic.getDangerousPieces();
+
+        for (int piece : remaining) {
+            if (!dangerous.contains(piece)) {
+                System.out.println("I can safely give this to the opponent");
+                return false; // I can safely give this to the opponent
+            }
+        }
+        System.out.println("HAVE TO BLOCK");
+        return true; // All remaining pieces are dangerous — I must block
     }
+
 
     /** “Place the current piece to block their win.” */
     public Move makeBlockingMove() {
-        // TODO: same loop as makeWinningMove(), but looking for their win-spots
+        int[][] board = Constants.logicBoard;
+        int myPiece = Constants.logicControl.getFirst();
+        List<Integer> dangerous = GameLogic.getDangerousPieces();
+
+        // Get all empty squares
+        List<Move> emptySquares = new ArrayList<>();
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (board[row][col] == 0) {
+                    emptySquares.add(new Move(row, col));
+                }
+            }
+        }
+
+        // Now check only those empty positions
+        for (Move move : emptySquares) {
+            int row = move.getRow();
+            int col = move.getCol();
+
+            // Simulate each dangerous piece at this position
+            for (int threatPiece : dangerous) {
+                board[row][col] = threatPiece;
+
+                boolean win =
+                    GameLogic.checkLine(GameLogic.getRow(row)) ||
+                    GameLogic.checkLine(GameLogic.getColumn(col)) ||
+                    (row == col && GameLogic.checkLine(GameLogic.getDiagonal(true))) ||
+                    (row + col == 3 && GameLogic.checkLine(GameLogic.getDiagonal(false)));
+
+                board[row][col] = 0;
+
+                if (win) {
+                    return new Move(row, col);
+                }
+            }
+        }
+
         return pickAnyMove();
     }
 
@@ -83,7 +135,7 @@ public class BotLogic {
             col = r.nextInt(0,4);
         } while (Constants.logicBoard[row][col] != 0);
     
-        System.out.printf("pickAnyMove (%d,%d)%n", row, col);
+        System.out.printf("picking Any Move (%d,%d)%n", row, col);
     
         // use the piece you were given (replace `currentPieceId` with your actual field)
         return new Move(row, col);
@@ -108,7 +160,7 @@ public class BotLogic {
 
     public int selectLeastCommonPiece() {
         List<Integer> placed = getPlacedPieces();      // Encoded ints: 1–16
-        List<Integer> safePieces = getSafePieces();
+        List<Integer> safePieces = GameLogic.getSafePieces();
         System.out.println(getAvailablePieces().toString());
 
         // Count how common each trait is across placed pieces
@@ -151,7 +203,7 @@ public class BotLogic {
         return Constants.logicControl;
     }
 
-    public List<Integer> getPlacedPieces() {
+    private List<Integer> getPlacedPieces() {
         List<Integer> placed = new ArrayList<>();
 
         for (int i = 0; i < 4; i++) {
@@ -164,22 +216,6 @@ public class BotLogic {
         }
 
         return placed;
-    }
-
-    private List<Integer> getSafePieces() {
-        List<Integer> allAvailable = new ArrayList<>(Constants.logicControl);
-        List<Integer> dangerous = GameLogic.getDangerousPieces();
-
-        List<Integer> safe = new ArrayList<>();
-
-        for (int piece : allAvailable) {
-            if (!dangerous.contains(piece)) {
-                safe.add(piece);
-            }
-        }
-
-        System.out.println("Safe pieces: " + safe);
-        return safe;
     }
 }
 

@@ -185,7 +185,20 @@ public class GameLogic {
         return dangerous;
     }
 
+    public static List<Integer> getSafePieces() {
+        List<Integer> allAvailable = new ArrayList<>(Constants.logicControl);
+        List<Integer> dangerous = GameLogic.getDangerousPieces();
 
+        List<Integer> safe = new ArrayList<>();
+
+        for (int piece : allAvailable) {
+            if (!dangerous.contains(piece)) {
+                safe.add(piece);
+            }
+        }
+
+        return safe;
+    }
 
     public static Move getOpportunityMove() {
         int[][] board = Constants.logicBoard;
@@ -249,4 +262,6 @@ public class GameLogic {
 
         return ((andBits | orNotBits) != 0) ? filled : 0;
     }
+
+    
 }
