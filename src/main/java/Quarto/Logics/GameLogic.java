@@ -15,11 +15,9 @@ import Quarto.Utils.Utils;
 public class GameLogic {
 
     private int turns;
-    private static int[][] simulatedBoard;
 
     public GameLogic() {
         Globals.logicBoard = new int[4][4]; 
-        simulatedBoard = new int[4][4];
         turns = 1;
     }
 
@@ -28,14 +26,7 @@ public class GameLogic {
         Globals.logicBoard[row][col] = piece;
     }
 
-    public static void addSimulatedPiece(int row, int col, int piece){
-        simulatedBoard = Utils.getBoardCopy();
-        simulatedBoard[row][col] = piece;
-    }
 
-    public int[][] getSimulatedBoard() {
-        return simulatedBoard;
-    }
 
     public boolean isGameOver(boolean isSim) {
         if(!isSim){

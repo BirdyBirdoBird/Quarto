@@ -141,8 +141,6 @@ public class BotLogic {
         return false;
     }
 
-
-
     /** “Place the current piece in a trapping spot.” */
     public Move makeTrappingMove() {
         int[][] board = Globals.logicBoard;
@@ -264,6 +262,7 @@ public class BotLogic {
         List<Integer> placed = getPlacedPieces();      // Encoded ints: 1–16
         List<Integer> safePieces = GameLogic.getSafePieces();
         System.out.println(getAvailablePieces().toString());
+        System.out.println(safePieces);
 
         // Count how common each trait is across placed pieces
         int[] traitCounts = new int[4]; // [Red, Big, Round, Hollow]
@@ -280,7 +279,7 @@ public class BotLogic {
         // Find available piece with *least common* trait combo
         int minScore = Integer.MAX_VALUE;
         int selected = getAvailablePieces().get(0); // fallback
-
+        
         for (int candidate : safePieces) {
                 
             int bits = candidate - 1;
