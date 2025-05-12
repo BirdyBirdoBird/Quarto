@@ -34,7 +34,7 @@ public class StartMenu extends JFrame implements ActionListener {
     public StartMenu() {
         super("Start Menu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 600);
+        setSize(700, 600);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -87,17 +87,17 @@ public class StartMenu extends JFrame implements ActionListener {
         fightComputer.setBackground(Color.yellow);
         back.setBackground(Color.yellow);
 
-        newGame.setBounds(380, 170, 200, 70);
-        settings.setBounds(380, 280, 200, 70);
-        exit.setBounds(380, 390, 200, 70);
-        fightHuman.setBounds(380, 170, 200, 70);
-        fightComputer.setBounds(370, 280, 220, 70);
-        back.setBounds(380, 390, 200, 70);
+        newGame.setBounds(250, 170, 200, 70);
+        settings.setBounds(250, 280, 200, 70);
+        exit.setBounds(250, 390, 200, 70);
+        fightHuman.setBounds(260, 170, 200, 70);
+        fightComputer.setBounds(250, 280, 220, 70);
+        back.setBounds(260, 390, 200, 70);
 
-        player1Label.setBounds(200, 170, 200, 70);
-        player2Label.setBounds(200, 280, 200, 70);
-        player1.setBounds(450, 170, 400, 70);
-        player2.setBounds(450, 280, 400, 70);
+        player1Label.setBounds(150, 170, 200, 70);
+        player2Label.setBounds(150, 280, 200, 70);
+        player1.setBounds(250, 170, 300, 70);
+        player2.setBounds(250, 280, 300, 70);
 
         newGame.addActionListener(this);
         settings.addActionListener(this);
@@ -207,11 +207,55 @@ public class StartMenu extends JFrame implements ActionListener {
         @Override
         public void paint(Graphics g) {
             super.paint(g);
+
+            // Draw title
             g.setFont(new Font("Monospaced", Font.BOLD, 40));
             g.setColor(Color.BLACK);
-            g.drawString("Querto", 410, 100);
-            g.drawLine(345, 110, 630, 110);
-            g.drawLine(375, 114, 600, 114);
+            g.drawString("Quarto", 275, 50);
+
+            // Draw 4 pieces below the title
+            int startX = 160;  // starting x position
+            int y = 60;
+
+            drawPiece(g.create(startX, y, 100, 100), true, true, true, false);   // Big Red Round Solid
+            drawPiece(g.create(startX + 100, y, 100, 100), false, true, false, false); // Small Red Square Solid
+            drawPiece(g.create(startX + 200, y, 100, 100), true, false, true, true);   // Big Blue Round Hollow
+            drawPiece(g.create(startX + 300, y, 100, 100), false, false, false, true); // Small Blue Square Hollow
+        }
+
+        /**
+         * Draws a single Quarto piece using provided style flags
+         * @param g Graphics (clipped to 100x100 box)
+         * @param isBig true = big, false = small
+         * @param isRed true = red, false = blue
+         * @param isRound true = circle, false = square
+         * @param isHollow true = hollow, false = solid
+         */
+        private void drawPiece(Graphics g, boolean isBig, boolean isRed, boolean isRound, boolean isHollow) {
+            // Set piece color
+            g.setColor(isRed ? Color.RED : Color.BLUE);
+
+            // Determine size of the piece
+            int size = isBig ? 50 : 30;
+            int offset = (100 - size) / 2;
+
+            if (isRound) {
+                // Draw a circle
+                g.fillOval(offset - 5, offset - 5, size - 5, size - 5);
+
+                if (isHollow) {
+                    g.setColor(getBackground());
+                    g.fillOval(offset + 20 - 5, offset + 20 - 5, size - 40 - 5, size - 40 - 5);
+                }
+            } else {
+                // Draw a square
+                g.fillRect(offset - 5, offset - 5, size - 5, size - 5);
+
+                if (isHollow) {
+                    g.setColor(getBackground());
+                    g.fillRect(offset + 20 - 5, offset + 20 - 5, size - 40 - 5, size - 40 - 5);
+                }
+            }
         }
     }
 
@@ -235,12 +279,12 @@ public class StartMenu extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == fightHuman) {
-            GameStateManager stateManager = new GameStateManager(false, this);
+            GameStateManager stateManager = new GameStateManager(false, this, name1, name2);
             dispose();
         }
 
         if (e.getSource() == fightComputer) {
-            GameStateManager stateManager = new GameStateManager(true, this);
+            GameStateManager stateManager = new GameStateManager(true, this, name1, "bot");
             dispose();
         }
 

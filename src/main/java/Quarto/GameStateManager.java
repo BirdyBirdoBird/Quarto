@@ -24,18 +24,18 @@ public class GameStateManager {
     private final BoardFrame frame;
     private final Control control;
     private Timer timer;
-    public GameStateManager(boolean isBotPlaying, StartMenu startMenu){
+    public GameStateManager(boolean isBotPlaying, StartMenu startMenu, String player1, String player2){
         bot = new Bot();
         Globals.botPLaying = isBotPlaying;
         if(isBotPlaying){
-            this.frame = new BoardFrame("player1", "bot");
+            this.frame = new BoardFrame(player1, "bot");
         }
         else{
-            this.frame = new BoardFrame("player1", "player2");
+            this.frame = new BoardFrame(player1, player2);
         }
 
         this.control = new Control(frame, startMenu);
-        timer = new Timer(1000, (ActionEvent e) -> {
+        timer = new Timer(100, (ActionEvent e) -> {
             // ((Timer) e.getSource()).stop();
             System.out.println(Globals.gameState);
             game(); // proceed to player's turn
