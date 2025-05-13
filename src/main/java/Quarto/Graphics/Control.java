@@ -27,7 +27,7 @@ public class Control extends JFrame
     private BoardFrame frame;
     private StartMenu startMenu;
 
-    public Control (BoardFrame _frame, StartMenu menu)
+    public Control (BoardFrame frame, StartMenu menu)
     {
         setTitle("Piece Selection");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,9 +35,8 @@ public class Control extends JFrame
         setLocation(800, 0);
 
         startMenu = menu;
-        this.frame = _frame;
+        this.frame = frame;
         selectionPanel = new JPanel(new GridLayout(8, 2));
-        ButtonGroup group = new ButtonGroup();
         frame.setControl(this);
 
         for (int i = 0; i < 16; i++) {
@@ -82,7 +81,7 @@ public class Control extends JFrame
     }
 
 
-    public void findPieceFromEncoded(int encoded) {
+    public void SelectPieceFromEncoded(int encoded) {
         for (int i = 0; i < selectionPanel.getComponentCount(); i++) {
             Square comp = (Square) selectionPanel.getComponent(i);
                 int encodedValue = Utils.encodePiece(comp);
@@ -158,21 +157,6 @@ public class Control extends JFrame
         }
         selectionPanel.revalidate();
         selectionPanel.repaint();
-    }
-
-    public List<Integer> getAvailablePieces() {
-        List<Integer> availablePieces = new ArrayList<>();
-    
-        for (int i = 0; i < selectionPanel.getComponentCount(); i++) {
-            if (selectionPanel.getComponent(i) instanceof Square) {
-                Square piece = (Square) selectionPanel.getComponent(i);
-                if (!piece.isEmpty) {
-                    availablePieces.add(Utils.encodePiece(piece));
-                }
-            }
-        }
-    
-        return availablePieces;
     }
     
 }

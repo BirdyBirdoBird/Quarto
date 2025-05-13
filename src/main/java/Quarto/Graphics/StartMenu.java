@@ -24,7 +24,6 @@ import Quarto.GameStateManager;
 public class StartMenu extends JFrame implements ActionListener {
 
     private MenuPanel contentPane;
-    private int selection;
     private JButton newGame, settings, exit;
     private JButton fightHuman, fightComputer, back;
     private JTextField player1, player2;

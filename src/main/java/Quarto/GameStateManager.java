@@ -49,7 +49,7 @@ public class GameStateManager {
             Globals.gameState = GameState.BOT_SELECT_MOVE;
         }
         if(Globals.gameState == GameState.BOT_SELECT_MOVE){
-            control.findPieceFromEncoded(bot.choosePiece());
+            control.SelectPieceFromEncoded(bot.choosePiece());
             Globals.gameState = GameState.PLAYER_PLACE_MOVE;
         }
     }

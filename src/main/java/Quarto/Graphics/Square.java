@@ -137,11 +137,6 @@ public class Square extends JPanel {
         }
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(200, 200);
-    }
-
     private Square getThis ()
     {
         return this;

@@ -59,7 +59,6 @@ public class BotLogic {
     /** “Place the current piece to block their win.” */
     public Move makeBlockingMove() {
         int[][] board = Globals.logicBoard;
-        int myPiece = Globals.logicControl.getFirst();
         List<Integer> dangerous = GameLogic.getDangerousPieces();
 
         // Get all empty squares
