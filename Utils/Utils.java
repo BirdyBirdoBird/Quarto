@@ -6,6 +6,7 @@
 package Quarto.Utils;
 
 import Quarto.Globals;
+import Quarto.Graphics.BoardFrame;
 import Quarto.Graphics.Square;
 
 /**
@@ -38,12 +39,21 @@ public class Utils {
         return bits + 1; // Shift range to 1–16 instead of 0–15
     }
 
-    public static void printMatrix(int[][] matrix) {
-        for (int[] row : matrix) {
-            for (int value : row) {
-                System.out.print(value + " ");
-            }
-            System.out.println(); // Move to the next line after each row
+    public static int[][] getBoardCopy() {
+        int[][] src = Globals.logicBoard;
+        int[][] copy = new int[src.length][];
+        for (int i = 0; i < src.length; i++) {
+            copy[i] = src[i].clone();
         }
+        return copy;
     }
+
+    public static void printMatrix(int[][] matrix) {
+    for (int[] row : matrix) {
+        for (int value : row) {
+            System.out.print(value + " ");
+        }
+        System.out.println(); // Move to the next line after each row
+    }
+}
 }

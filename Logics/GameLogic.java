@@ -7,7 +7,6 @@ package Quarto.Logics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import Quarto.Globals;
 import Quarto.Utils.Move;
@@ -16,15 +15,26 @@ import Quarto.Utils.Utils;
 public class GameLogic {
 
     private int turns;
+    private static int[][] simulatedBoard;
 
     public GameLogic() {
         Globals.logicBoard = new int[4][4]; 
+        simulatedBoard = new int[4][4];
         turns = 1;
     }
 
     public void addPiece(int row, int col, int piece) {
         //System.out.println(piece);
         Globals.logicBoard[row][col] = piece;
+    }
+
+    public static void addSimulatedPiece(int row, int col, int piece){
+        simulatedBoard = Utils.getBoardCopy();
+        simulatedBoard[row][col] = piece;
+    }
+
+    public int[][] getSimulatedBoard() {
+        return simulatedBoard;
     }
 
     public boolean isGameOver(boolean isSim) {
@@ -148,33 +158,32 @@ public class GameLogic {
     public static List<Integer> getDangerousPieces() {
         List<Integer> dangerous = new ArrayList<>();
         int[][] board = Globals.logicBoard;
-        List<Move> emptySquares = getEmptySquares(board);
 
         for (int candidatePiece : Globals.logicControl) {
-            for (Move move : emptySquares) {
-                int row = move.getRow();
-                int col = move.getCol();
+            for (int row = 0; row < 4; row++) {
+                for (int col = 0; col < 4; col++) {
+                    if (board[row][col] == 0) {
+                        // Simulate
+                        board[row][col] = candidatePiece;
 
-                // Simulate placing the piece
-                board[row][col] = candidatePiece;
+                        boolean rowWin = GameLogic.checkLine(GameLogic.getRow(row));
+                        boolean colWin = GameLogic.checkLine(GameLogic.getColumn(col));
+                        boolean diag1Win = (row == col) && GameLogic.checkLine(GameLogic.getDiagonal(true));
+                        boolean diag2Win = (row + col == 3) && GameLogic.checkLine(GameLogic.getDiagonal(false));
 
-                boolean rowWin = GameLogic.checkLine(GameLogic.getRow(row));
-                boolean colWin = GameLogic.checkLine(GameLogic.getColumn(col));
-                boolean diag1Win = (row == col) && GameLogic.checkLine(GameLogic.getDiagonal(true));
-                boolean diag2Win = (row + col == 3) && GameLogic.checkLine(GameLogic.getDiagonal(false));
+                        board[row][col] = 0; // undo
 
-                board[row][col] = 0; // Undo the simulation
-
-                if (rowWin || colWin || diag1Win || diag2Win) {
-                    dangerous.add(candidatePiece);
-                    break; // This piece is dangerous — no need to check other positions
+                        if (rowWin || colWin || diag1Win || diag2Win) {
+                            dangerous.add(candidatePiece);
+                            break; // No need to check more positions for this piece
+                        }
+                    }
                 }
             }
         }
 
         return dangerous;
     }
-
 
     public static List<Integer> getSafePieces() {
         List<Integer> allAvailable = new ArrayList<>(Globals.logicControl);
@@ -194,60 +203,23 @@ public class GameLogic {
     public static Move getOpportunityMove() {
         int[][] board = Globals.logicBoard;
         int myPiece = Globals.logicControl.getFirst();
-        List<Move> emptySquares = getEmptySquares(board);
 
-        // Score all moves
-        List<Move> sortedMoves = new ArrayList<>(emptySquares);
-        sortedMoves.sort((a, b) -> {
-            int scoreB = scoreMultiOpportunities(board, b.getRow(), b.getCol(), myPiece);
-            int scoreA = scoreMultiOpportunities(board, a.getRow(), a.getCol(), myPiece);
-            return Integer.compare(scoreB, scoreA); // descending order
-        });
+        Move bestMove = null;
+        int bestScore = -1;
 
-        for (Move move : sortedMoves) {
-            int row = move.getRow();
-            int col = move.getCol();
-
-            board[row][col] = myPiece; // Simulate
-
-            List<Integer> remaining = new ArrayList<>(Globals.logicControl);
-            remaining.remove(Integer.valueOf(myPiece));
-
-            boolean hasSafePiece = false;
-
-            for (int piece : remaining) {
-                for (Move replyMove : emptySquares) {
-                    if (replyMove.equals(move)) continue;
-
-                    int r = replyMove.getRow();
-                    int c = replyMove.getCol();
-
-                    board[r][c] = piece;
-
-                    boolean win =
-                        GameLogic.checkLine(GameLogic.getRow(r)) ||
-                        GameLogic.checkLine(GameLogic.getColumn(c)) ||
-                        (r == c && GameLogic.checkLine(GameLogic.getDiagonal(true))) ||
-                        (r + c == 3 && GameLogic.checkLine(GameLogic.getDiagonal(false)));
-
-                    board[r][c] = 0;
-
-                    if (!win) {
-                        hasSafePiece = true;
-                        break;
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (board[row][col] == 0) {
+                    int score = scoreMultiOpportunities(board, row, col, myPiece);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = new Move(row, col);
                     }
                 }
-
-                if (hasSafePiece) break;
             }
-
-            board[row][col] = 0;
-
-            if (hasSafePiece) return move;
         }
 
-        // If no move leaves a safe piece, just return the best scoring one anyway
-        return sortedMoves.isEmpty() ? null : sortedMoves.get(0);
+        return bestMove;
     }
 
     public static int scoreMultiOpportunities(int[][] board, int row, int col, int piece) {
@@ -256,8 +228,8 @@ public class GameLogic {
         board[row][col] = piece; // simulate
 
         int[][] lines = {
-            board[row], // Row
-            getColumn(col), // Column
+            board[row],                             // Row
+            getColumn(col),                  // Column
             (row == col) ? getDiagonal(true) : null,
             (row + col == 3) ? getDiagonal(false) : null
         };
@@ -329,15 +301,4 @@ public class GameLogic {
         return traitMatches;
     }
 
-    public static List<Move> getEmptySquares(int[][] board) {
-        List<Move> emptySquares = new ArrayList<>();
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
-                if (board[row][col] == 0) {
-                    emptySquares.add(new Move(row, col));
-                }
-            }
-        }
-        return emptySquares;
-    }
 }
