@@ -26,6 +26,7 @@ public class Square extends JPanel {
 
     public boolean isEmpty;
     public boolean isBig, isRound, isRed, isHollow;
+    private String id;
     public int row, col;
     private boolean isControl;
     private BoardFrame frame;
@@ -41,6 +42,7 @@ public class Square extends JPanel {
         this.isControl = isControl;
         row = x;
         col = y;
+        id = (char)(col+97)+(char)(4-row) + "";
         this.frame = frame;
         click = new Click();
         addMouseListener(click);
@@ -135,6 +137,11 @@ public class Square extends JPanel {
                 g.fillRect(offset + 20 - 5, offset + 20 - 5, size - 40 - 5, size - 40 - 5);
             }
         }
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(200, 200);
     }
 
     private Square getThis ()
