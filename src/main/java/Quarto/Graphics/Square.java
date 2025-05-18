@@ -6,7 +6,6 @@
 package Quarto.Graphics;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,7 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import Quarto.Constants;
+import Quarto.Globals;
 import Quarto.Utils.GameState;
 
 /**
@@ -26,7 +25,6 @@ public class Square extends JPanel {
 
     public boolean isEmpty;
     public boolean isBig, isRound, isRed, isHollow;
-    private String id;
     public int row, col;
     private boolean isControl;
     private BoardFrame frame;
@@ -42,7 +40,6 @@ public class Square extends JPanel {
         this.isControl = isControl;
         row = x;
         col = y;
-        id = (char)(col+97)+(char)(4-row) + "";
         this.frame = frame;
         click = new Click();
         addMouseListener(click);
@@ -139,11 +136,6 @@ public class Square extends JPanel {
         }
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(200, 200);
-    }
-
     private Square getThis ()
     {
         return this;
@@ -155,18 +147,18 @@ public class Square extends JPanel {
         public void mousePressed(MouseEvent e) {
             if (frame.isGameOver) return;
 
-            if(Constants.botPLaying){
+            if(Globals.botPLaying){
 
-                if (isEmpty && !isControl && Constants.gameState == GameState.PLAYER_PLACE_MOVE) {
-                    frame.addPiece(row, col, getThis());
-                    Constants.gameState = GameState.PLAYER_SELECT_MOVE;
+                if (isEmpty && !isControl && Globals.gameState == GameState.PLAYER_PLACE_MOVE) {
+                    frame.addPiece((byte)row, (byte) col);
+                    Globals.gameState = GameState.PLAYER_SELECT_MOVE;
                     return;
                 }
     
-                if (isControl && Constants.gameState == GameState.PLAYER_SELECT_MOVE)
+                if (isControl && Globals.gameState == GameState.PLAYER_SELECT_MOVE)
                 {
                     control.setSelectedPiece(getThis());
-                    Constants.gameState = GameState.BOT_PLACE_MOVE;
+                    Globals.gameState = GameState.BOT_PLACE_MOVE;
                     setBackground(Color.YELLOW);
                     repaint();
                 }
@@ -174,7 +166,7 @@ public class Square extends JPanel {
             else{
                 
                 if (isEmpty && !isControl) {
-                    frame.addPiece(row, col, getThis());
+                    frame.addPiece((byte) row, (byte) col);
                     return;
                 }
     

@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Timer;
 
+import Quarto.Bot.Bot;
 import Quarto.Graphics.BoardFrame;
 import Quarto.Graphics.Control;
 import Quarto.Graphics.StartMenu;
@@ -19,35 +20,37 @@ import Quarto.Utils.GameState;
  * @author david
  */
 public class GameStateManager {
+    private final Bot bot;
     private final BoardFrame frame;
     private final Control control;
     private Timer timer;
-    public GameStateManager(boolean isBotPlaying, StartMenu startMenu){
-        Constants.botPLaying = isBotPlaying;
+    public GameStateManager(boolean isBotPlaying, StartMenu startMenu, String player1, String player2){
+        bot = new Bot();
+        Globals.botPLaying = isBotPlaying;
         if(isBotPlaying){
-            this.frame = new BoardFrame("player1", "bot");
+            this.frame = new BoardFrame(player1, "bot");
         }
         else{
-            this.frame = new BoardFrame("player1", "player2");
+            this.frame = new BoardFrame(player1, player2);
         }
 
         this.control = new Control(frame, startMenu);
-        timer = new Timer(1000, (ActionEvent e) -> {
+        timer = new Timer(100, (ActionEvent e) -> {
             // ((Timer) e.getSource()).stop();
-            System.out.println(Constants.gameState);
+            // System.out.println(Globals.gameState);
             game(); // proceed to player's turn
         });
         timer.start();
     }
 
     public void game(){
-        if(Constants.gameState == GameState.BOT_PLACE_MOVE){
-            /// 
-            Constants.gameState = GameState.BOT_SELECT_MOVE;
+        if(Globals.gameState == GameState.BOT_PLACE_MOVE){
+            frame.addPiece(bot.chooseMove());
+            Globals.gameState = GameState.BOT_SELECT_MOVE;
         }
-        if(Constants.gameState == GameState.BOT_SELECT_MOVE){
-            ///
-            Constants.gameState = GameState.PLAYER_PLACE_MOVE;
+        if(Globals.gameState == GameState.BOT_SELECT_MOVE){
+            control.SelectPieceFromEncoded(bot.choosePiece());
+            Globals.gameState = GameState.PLAYER_PLACE_MOVE;
         }
     }
     

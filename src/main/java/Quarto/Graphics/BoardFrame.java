@@ -12,7 +12,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import Quarto.Globals;
 import Quarto.Logics.GameLogic;
+import Quarto.Utils.Move;
 import Quarto.Utils.Utils;
 
 public class BoardFrame extends JFrame
@@ -64,15 +66,24 @@ public class BoardFrame extends JFrame
         }
     }
 
-    public void addPiece (int row, int col, Square square)
+    public void addPiece(Move move){
+        addPiece(move.getRow(), move.getCol());
+    }
+    
+    public void addPiece(byte row, byte col){
+        addPiece(row, col, board[row][col]);
+    }
+
+    private void addPiece (byte row, byte col, Square square)
     {
-        if (control.getSelectedPiece() != null && square != null)
+        if (control.getSelectedPiece() != null && square.isEmpty)
         {
+            Globals.emptySquares.remove(new Move(row, col));
             Square controlSquare = control.getSelectedPiece();
             square.addPiece(controlSquare.isRed, controlSquare.isHollow, controlSquare.isBig, controlSquare.isRound);
             board[row][col] = square;
             control.useSelectedPiece();
-            gameLogic.addPiece(square.row, square.col, Utils.encodePiece(square));
+            gameLogic.addPiece((byte)square.row, (byte) square.col, Utils.encodePiece(square));
             checkGameOver();
             isOneWin = !isOneWin;
         }
@@ -106,8 +117,8 @@ public class BoardFrame extends JFrame
             JOptionPane.showMessageDialog(this, "Game Over! " + "Its a Draw!","Alert", JOptionPane.INFORMATION_MESSAGE);
             isGameOver = true;
         }
-        if (gameLogic.isGameOver()) {
-            JOptionPane.showMessageDialog(this, "Game Over! " + ((isOneWin) ? name1 : name2) + " Won!","Alert", JOptionPane.INFORMATION_MESSAGE);
+        if (gameLogic.isGameOver(false)) {
+            JOptionPane.showMessageDialog(this, "Game Over! " + ((isOneWin) ? name2 : name1) + " Won!","Alert", JOptionPane.INFORMATION_MESSAGE);
             isGameOver = true;
         }
     }
