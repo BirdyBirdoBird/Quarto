@@ -5,7 +5,6 @@
 
 package Quarto.Utils;
 
-import Quarto.Globals;
 import Quarto.Graphics.Square;
 
 /**
