@@ -37,7 +37,7 @@ public class GameStateManager {
         this.control = new Control(frame, startMenu);
         timer = new Timer(100, (ActionEvent e) -> {
             // ((Timer) e.getSource()).stop();
-            System.out.println(Globals.gameState);
+            // System.out.println(Globals.gameState);
             game(); // proceed to player's turn
         });
         timer.start();

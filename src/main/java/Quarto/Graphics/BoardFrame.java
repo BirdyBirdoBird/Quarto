@@ -84,6 +84,10 @@ public class BoardFrame extends JFrame
             gameLogic.addPiece(square.row, square.col, Utils.encodePiece(square));
             checkGameOver();
             isOneWin = !isOneWin;
+            GameLogic.updateEmptySquares();
+        }
+        else{
+            System.err.println("ISNT EMPTY");
         }
     }
 

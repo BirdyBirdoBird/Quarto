@@ -7,11 +7,9 @@ package Quarto.Logics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import Quarto.Globals;
 import Quarto.Utils.Move;
-import Quarto.Utils.Utils;
 
 public class GameLogic {
 
@@ -19,12 +17,19 @@ public class GameLogic {
 
     public GameLogic() {
         Globals.logicBoard = new int[4][4]; 
+        updateEmptySquares();
         turns = 1;
     }
 
     public void addPiece(int row, int col, int piece) {
         //System.out.println(piece);
         Globals.logicBoard[row][col] = piece;
+    }
+
+    public void removePiece(int row, int col){
+        System.out.println("BEFORE: " + Globals.emptySquares);
+        Globals.emptySquares.remove(new Move(row, col));
+        System.out.println("AFTER + " + Globals.emptySquares);
     }
 
     public boolean isGameOver(boolean isSim) {
@@ -79,10 +84,6 @@ public class GameLogic {
         }
 
         return (andBits | ~orBits & 0b1111) != 0;
-    }
-
-    public void removePiece(int i, int j){
-        Globals.logicBoard[i][j] = 0;
     }
 
     public static boolean checkLineWithPiece(int[] line, int newPieceBits) {
@@ -148,7 +149,7 @@ public class GameLogic {
     public static List<Integer> getDangerousPieces() {
         List<Integer> dangerous = new ArrayList<>();
         int[][] board = Globals.logicBoard;
-        List<Move> emptySquares = getEmptySquares(board);
+        List<Move> emptySquares = getEmptySquares();
 
         for (int candidatePiece : Globals.logicControl) {
             for (Move move : emptySquares) {
@@ -194,7 +195,7 @@ public class GameLogic {
     public static Move getOpportunityMove() {
         int[][] board = Globals.logicBoard;
         int myPiece = Globals.logicControl.getFirst();
-        List<Move> emptySquares = getEmptySquares(board);
+        List<Move> emptySquares = getEmptySquares();
 
         // Score all moves
         List<Move> sortedMoves = new ArrayList<>(emptySquares);
@@ -329,15 +330,18 @@ public class GameLogic {
         return traitMatches;
     }
 
-    public static List<Move> getEmptySquares(int[][] board) {
-        List<Move> emptySquares = new ArrayList<>();
+    public static List<Move> getEmptySquares() {
+        return Globals.emptySquares;
+    }
+    
+    public static void updateEmptySquares(){
+        Globals.emptySquares.clear();
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
-                if (board[row][col] == 0) {
-                    emptySquares.add(new Move(row, col));
+                if (Globals.logicBoard[row][col] == 0) {
+                    Globals.emptySquares.add(new Move(row, col));
                 }
             }
         }
-        return emptySquares;
     }
 }

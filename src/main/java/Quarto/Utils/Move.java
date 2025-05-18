@@ -25,4 +25,17 @@ public class Move {
         return col;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;                    
+        if (!(o instanceof Move)) return false;        // Byte Constants
+        Move other = (Move) o;
+        return this.row == other.row && this.col == other.col;
+    }
+
+    @Override
+    public String toString(){
+        return "move: " + row  + " " + col;
+    }
+
   }
