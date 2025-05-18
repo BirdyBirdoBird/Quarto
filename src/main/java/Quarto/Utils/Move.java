@@ -10,19 +10,32 @@ package Quarto.Utils;
  * @author david
  */
 public class Move {
-    private final int row, col;
+    private final byte row, col;
 
-    public Move(int row, int col) {
+    public Move(byte row, byte col) {
         this.col = col;
         this.row = row;
     }
 
-    public int getRow() {
+    public byte getRow() {
         return row;
     }
 
-    public int getCol() {
+    public byte getCol() {
         return col;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;                    
+        if (!(o instanceof Move)) return false;        // Byte Constants
+        Move other = (Move) o;
+        return this.row == other.row && this.col == other.col;
+    }
+
+    @Override
+    public String toString(){
+        return "move: " + row  + " " + col;
     }
 
   }

@@ -6,7 +6,6 @@
 package Quarto.Graphics;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -151,7 +150,7 @@ public class Square extends JPanel {
             if(Globals.botPLaying){
 
                 if (isEmpty && !isControl && Globals.gameState == GameState.PLAYER_PLACE_MOVE) {
-                    frame.addPiece(row, col);
+                    frame.addPiece((byte)row, (byte) col);
                     Globals.gameState = GameState.PLAYER_SELECT_MOVE;
                     return;
                 }
@@ -167,7 +166,7 @@ public class Square extends JPanel {
             else{
                 
                 if (isEmpty && !isControl) {
-                    frame.addPiece(row, col);
+                    frame.addPiece((byte) row, (byte) col);
                     return;
                 }
     

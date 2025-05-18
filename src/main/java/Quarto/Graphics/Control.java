@@ -112,7 +112,7 @@ public class Control extends JFrame
 
     }
 
-    public static void prioritizePiece(int piece) {
+    public static void prioritizePiece(Byte piece) {
         // Remove it first (if present), then re-add to front
         Globals.logicControl.removeFirstOccurrence(piece);
         Globals.logicControl.addFirst(piece);

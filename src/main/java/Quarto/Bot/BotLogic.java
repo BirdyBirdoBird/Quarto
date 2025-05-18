@@ -1,16 +1,15 @@
 package Quarto.Bot;
 
-import Quarto.Utils.Move;
-import Quarto.Globals;
-import Quarto.Graphics.Square;
-import Quarto.Logics.GameLogic;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import Quarto.Globals;
+import Quarto.Logics.GameLogic;
+import Quarto.Utils.Move;
 
 /**
  * A flat, rule-based set of predicates and actions for placement and piece-selection.
@@ -36,16 +35,16 @@ public class BotLogic {
 
     /** “Can I block the opponent’s immediate win?” */
     public boolean canBlockOpponent() {
-        int myPiece = Globals.logicControl.getFirst();
+        Byte myPiece = Globals.logicControl.getFirst();
 
         // Simulate removing the piece I'm about to play
-        LinkedList<Integer> remaining = new LinkedList<>(Globals.logicControl);
-        remaining.remove(Integer.valueOf(myPiece));
+        LinkedList<Byte> remaining = new LinkedList<>(Globals.logicControl);
+        remaining.remove(Byte.valueOf(myPiece));
 
         // Now check: are there any safe pieces left?
-        List<Integer> dangerous = GameLogic.getDangerousPieces();
+        List<Byte> dangerous = GameLogic.getDangerousPieces();
 
-        for (int piece : remaining) {
+        for (Byte piece : remaining) {
             if (!dangerous.contains(piece)) {
                 System.out.println("I can safely give this to the opponent");
                 return false; // I can safely give this to the opponent
@@ -58,13 +57,13 @@ public class BotLogic {
 
     /** “Place the current piece to block their win.” */
     public Move makeBlockingMove() {
-        int[][] board = Globals.logicBoard;
-        List<Integer> dangerous = GameLogic.getDangerousPieces();
+        byte[][] board = Globals.logicBoard;
+        List<Byte> dangerous = GameLogic.getDangerousPieces();
 
         // Get all empty squares
         List<Move> emptySquares = new ArrayList<>();
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
+        for (byte row = 0; row < 4; row++) {
+            for (byte col = 0; col < 4; col++) {
                 if (board[row][col] == 0) {
                     emptySquares.add(new Move(row, col));
                 }
@@ -73,11 +72,11 @@ public class BotLogic {
 
         // Now check only those empty positions
         for (Move move : emptySquares) {
-            int row = move.getRow();
-            int col = move.getCol();
+            byte row = move.getRow();
+            byte col = move.getCol();
 
             // Simulate each dangerous piece at this position
-            for (int threatPiece : dangerous) {
+            for (byte threatPiece : dangerous) {
                 board[row][col] = threatPiece;
 
                 boolean win =
@@ -99,15 +98,15 @@ public class BotLogic {
 
     /** “Can I set up a trap (i.e. a move that leaves them no safe reply)?” */
     public boolean canSetUpTrap() {
-        int[][] board = Globals.logicBoard;
-        int myPiece = Globals.logicControl.getFirst();
+        byte[][] board = Globals.logicBoard;
+        byte myPiece = Globals.logicControl.getFirst();
 
         // Precompute: for each trait (bit 0–3), how many remaining pieces do NOT have that trait
         Map<Integer, Integer> safePieceCountPerTrait = new HashMap<>();
         for (int bit = 0; bit < 4; bit++) safePieceCountPerTrait.put(bit, 0);
 
-        List<Integer> remaining = new ArrayList<>(Globals.logicControl);
-        remaining.remove(Integer.valueOf(myPiece));
+        List<Byte> remaining = new ArrayList<>(Globals.logicControl);
+        remaining.remove(Byte.valueOf(myPiece));
 
         for (int piece : remaining) {
             int bits = piece - 1;
@@ -119,18 +118,19 @@ public class BotLogic {
         }
 
         // Scan each empty square
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
+        for (byte row = 0; row < 4; row++) {
+            for (byte col = 0; col < 4; col++) {
                 if (board[row][col] != 0) continue;
 
                 board[row][col] = myPiece;
 
-                int[] traitMatches = GameLogic.countSharedTraitsIn3AlignedLines(row, col);
+                byte[] traitMatches = GameLogic.countSharedTraitsIn3AlignedLines(row, col);
 
                 board[row][col] = 0; // Undo
 
                 for (int bit = 0; bit < 4; bit++) {
                     if (traitMatches[bit] >= 2 && safePieceCountPerTrait.get(bit) > 0) {
+                        System.out.println("Trapping");
                         return true; // Valid trap found
                     }
                 }
@@ -142,15 +142,15 @@ public class BotLogic {
 
     /** “Place the current piece in a trapping spot.” */
     public Move makeTrappingMove() {
-        int[][] board = Globals.logicBoard;
-        int myPiece = Globals.logicControl.getFirst();
+        byte[][] board = Globals.logicBoard;
+        byte myPiece = Globals.logicControl.getFirst();
 
         // Recompute safe trait availability
         Map<Integer, Integer> safeTraitCount = new HashMap<>();
         for (int bit = 0; bit < 4; bit++) safeTraitCount.put(bit, 0);
 
-        List<Integer> remaining = new ArrayList<>(Globals.logicControl);
-        remaining.remove(Integer.valueOf(myPiece));
+        List<Byte> remaining = new ArrayList<>(Globals.logicControl);
+        remaining.remove(Byte.valueOf(myPiece));
 
         for (int piece : remaining) {
             int bits = piece - 1;
@@ -162,12 +162,12 @@ public class BotLogic {
         }
 
         // Now search for the first move that forms a trap
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
+        for (byte row = 0; row < 4; row++) {
+            for (byte col = 0; col < 4; col++) {
                 if (board[row][col] != 0) continue;
 
                 board[row][col] = myPiece;
-                int[] traitMatches = GameLogic.countSharedTraitsIn3AlignedLines(row, col);
+                byte[] traitMatches = GameLogic.countSharedTraitsIn3AlignedLines(row, col);
                 board[row][col] = 0;
 
                 for (int bit = 0; bit < 4; bit++) {
@@ -206,7 +206,7 @@ public class BotLogic {
         System.out.printf("picking Any Move (%d,%d)%n", row, col);
     
         // use the piece you were given (replace `currentPieceId` with your actual field)
-        return new Move(row, col);
+        return new Move((byte) row, (byte) col);
     }
 
 
@@ -221,8 +221,8 @@ public class BotLogic {
         return result;
     }
 
-    public Integer selectTrappingPiece() {
-        List<Integer> available = getAvailablePieces(); // from Constants.logicControl
+    public byte selectTrappingPiece() {
+        List<Byte> available = getAvailablePieces(); // from Constants.logicControl
 
         // For each bit (trait), count how many pieces have it
         int[] traitCount = new int[4];
@@ -246,7 +246,7 @@ public class BotLogic {
         }
 
         // Pick the first piece that does NOT have the trap trait
-        for (int piece : available) {
+        for (byte piece : available) {
             int bits = piece - 1;
             if (((bits >> trapBit) & 1) == 0) {
                 return piece; // safe to give
@@ -257,11 +257,11 @@ public class BotLogic {
         return available.get(0);
     }
 
-    public int selectLeastCommonPiece() {
-        List<Integer> placed = getPlacedPieces();      // Encoded ints: 1–16
-        List<Integer> safePieces = GameLogic.getSafePieces();
-        System.out.println(getAvailablePieces().toString());
-        System.out.println(safePieces);
+    public byte selectLeastCommonPiece() {
+        List<Byte> placed = getPlacedPieces();    
+        List<Byte> safePieces = GameLogic.getSafePieces();
+        System.out.println("available pieces " + getAvailablePieces().toString());
+        System.out.println("Safe pieces " + safePieces);
 
         // Count how common each trait is across placed pieces
         int[] traitCounts = new int[4]; // [Red, Big, Round, Hollow]
@@ -277,11 +277,11 @@ public class BotLogic {
 
         // Find available piece with *least common* trait combo
         int minScore = Integer.MAX_VALUE;
-        int selected = getAvailablePieces().get(0); // fallback
+        byte selected = getAvailablePieces().get(0); // fallback
         
-        for (int candidate : safePieces) {
+        for (byte candidate : safePieces) {
                 
-            int bits = candidate - 1;
+            byte bits = (byte) (candidate - 1);
             
             int score = 0;
             if ((bits & 1) != 0) score += traitCounts[0]; // Red
@@ -299,16 +299,16 @@ public class BotLogic {
     }
 
     /** “All pieces not yet placed on the board.” */
-    public List<Integer> getAvailablePieces() {
+    public List<Byte> getAvailablePieces() {
         return Globals.logicControl;
     }
 
-    private List<Integer> getPlacedPieces() {
-        List<Integer> placed = new ArrayList<>();
+    private List<Byte> getPlacedPieces() {
+        List<Byte> placed = new ArrayList<>();
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                int piece = Globals.logicBoard[i][j];
+                byte piece = Globals.logicBoard[i][j];
                 if (piece != 0) {
                     placed.add(piece);
                 }

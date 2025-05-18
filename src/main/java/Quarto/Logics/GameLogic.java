@@ -7,23 +7,26 @@ package Quarto.Logics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import Quarto.Globals;
 import Quarto.Utils.Move;
-import Quarto.Utils.Utils;
 
 public class GameLogic {
 
-    private int turns;
+    private byte turns;
 
     public GameLogic() {
-        Globals.logicBoard = new int[4][4]; 
+        Globals.logicBoard = new byte[4][4];
+        for (byte i = 0; i < 4; i++) {
+            for (byte k = 0; k < 4; k++) {
+                Globals.emptySquares.add(new Move(i, k));
+            }
+        } 
         turns = 1;
     }
 
-    public void addPiece(int row, int col, int piece) {
-        //System.out.println(piece);
+    public void addPiece(byte row, byte col, byte piece) {
+        //System.out.prbyteln(piece);
         Globals.logicBoard[row][col] = piece;
     }
 
@@ -32,7 +35,7 @@ public class GameLogic {
             turns++;
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (byte i = 0; i < 4; i++) {
             if (checkLine(getRow(i)) || checkLine(getColumn(i))) {
                 return true;
             }
@@ -44,36 +47,36 @@ public class GameLogic {
         return turns == 16;
     }
 
-    public static int[] getRow(int row) {
+    public static byte[] getRow(byte row) {
         return Globals.logicBoard[row];
     }
 
-    public static int[] getColumn(int col) {
-        int[] column = new int[4];
-        for (int i = 0; i < 4; i++) {
+    public static byte[] getColumn(byte col) {
+        byte[] column = new byte[4];
+        for (byte i = 0; i < 4; i++) {
             column[i] = Globals.logicBoard[i][col];
         }
         return column;
     }
 
-    public static int[] getDiagonal(boolean main) {
-        int[] diagonal = new int[4];
-        for (int i = 0; i < 4; i++) {
+    public static byte[] getDiagonal(boolean main) {
+        byte[] diagonal = new byte[4];
+        for (byte i = 0; i < 4; i++) {
             diagonal[i] = main ? Globals.logicBoard[i][i] : Globals.logicBoard[i][3 - i];
         }
         return diagonal;
     }
 
-    public static boolean checkLine(int[] line) {
+    public static boolean checkLine(byte[] line) {
         if (line[0] == 0) return false;
 
-        int andBits = line[0] - 1;
-        int orBits = line[0] - 1;
+        byte andBits = (byte) (line[0] - 1);
+        byte orBits = (byte) (line[0] - 1);
 
-        for (int i = 1; i < line.length; i++) {
+        for (byte i = 1; i < line.length; i++) {
             if (line[i] == 0) return false;
 
-            int pieceBits = line[i] - 1;
+            byte pieceBits = (byte) (line[i] - 1);
             andBits &= pieceBits;
             orBits |= pieceBits;
         }
@@ -81,16 +84,16 @@ public class GameLogic {
         return (andBits | ~orBits & 0b1111) != 0;
     }
 
-    public void removePiece(int i, int j){
+    public void removePiece(byte i, byte j){
         Globals.logicBoard[i][j] = 0;
     }
 
-    public static boolean checkLineWithPiece(int[] line, int newPieceBits) {
-        int[] lineCopy = Arrays.copyOf(line, 4);
+    public static boolean checkLineWithPiece(byte[] line, byte newPieceBits) {
+        byte[] lineCopy = Arrays.copyOf(line, 4);
 
-        for (int i = 0; i < 4; i++) {
+        for (byte i = 0; i < 4; i++) {
             if (lineCopy[i] == 0) {
-                lineCopy[i] = newPieceBits + 1; // simulate placing the piece (encoded 1–16)
+                lineCopy[i] = (byte) (newPieceBits + 1); // simulate placing the piece (encoded 1–16)
                 if (checkLine(lineCopy)) return true;
                 lineCopy[i] = 0; // reset
             }
@@ -100,60 +103,60 @@ public class GameLogic {
     }
 
     public static Move getWinningMove() {
-        int currentPiece = Globals.logicControl.getFirst();
-        int pieceBits = currentPiece - 1;
+        byte currentPiece = Globals.logicControl.getFirst();
+        byte pieceBits = (byte) (currentPiece - 1);
 
-        for (int row = 0; row < 4; row++) {
-            int[] line = getRow(row);
+        for (byte row = 0; row < 4; row++) {
+            byte[] line = getRow(row);
             if (canWinInLine(line, pieceBits)) {
-                int col = findEmptyInLine(line);
+                byte col = findEmptyInLine(line);
                 return new Move(row, col);
             }
 
             line = getColumn(row);
             if (canWinInLine(line, pieceBits)) {
-                int col = row;
-                int rowIndex = findEmptyInLine(line);
+                byte col = row;
+                byte rowIndex = findEmptyInLine(line);
                 return new Move(rowIndex, col);
             }
         }
 
 
-        int[] diag1 = getDiagonal(true);
+        byte[] diag1 = getDiagonal(true);
         if (canWinInLine(diag1, pieceBits)) {
-            int idx = findEmptyInLine(diag1);
+            byte idx = findEmptyInLine(diag1);
             return new Move(idx, idx);
         }
 
-        int[] diag2 = getDiagonal(false);
+        byte[] diag2 = getDiagonal(false);
         if (canWinInLine(diag2, pieceBits)) {
-            int idx = findEmptyInLine(diag2);
-            return new Move(idx, 3 - idx);
+            byte idx = findEmptyInLine(diag2);
+            return new Move(idx, (byte) (3 - idx));
         }
 
         return null;
     }
 
-    private static boolean canWinInLine(int[] line, int pieceBits) {
+    private static boolean canWinInLine(byte[] line, byte pieceBits) {
         return checkLineWithPiece(line, pieceBits);
     }
 
-    private static int findEmptyInLine(int[] line) {
-        for (int i = 0; i < 4; i++) {
+    private static byte findEmptyInLine(byte[] line) {
+        for (byte i = 0; i < 4; i++) {
             if (line[i] == 0) return i;
         }
         return -1; // Should never happen if line is winning
     }
 
-    public static List<Integer> getDangerousPieces() {
-        List<Integer> dangerous = new ArrayList<>();
-        int[][] board = Globals.logicBoard;
+    public static List<Byte> getDangerousPieces() {
+        List<Byte> dangerous = new ArrayList<>();
+        byte[][] board = Globals.logicBoard;
         List<Move> emptySquares = getEmptySquares(board);
 
-        for (int candidatePiece : Globals.logicControl) {
+        for (byte candidatePiece : Globals.logicControl) {
             for (Move move : emptySquares) {
-                int row = move.getRow();
-                int col = move.getCol();
+                byte row = move.getRow();
+                byte col = move.getCol();
 
                 // Simulate placing the piece
                 board[row][col] = candidatePiece;
@@ -176,13 +179,13 @@ public class GameLogic {
     }
 
 
-    public static List<Integer> getSafePieces() {
-        List<Integer> allAvailable = new ArrayList<>(Globals.logicControl);
-        List<Integer> dangerous = GameLogic.getDangerousPieces();
+    public static List<Byte> getSafePieces() {
+        List<Byte> allAvailable = new ArrayList<>(Globals.logicControl);
+        List<Byte> dangerous = GameLogic.getDangerousPieces();
 
-        List<Integer> safe = new ArrayList<>();
+        List<Byte> safe = new ArrayList<>();
 
-        for (int piece : allAvailable) {
+        for (byte piece : allAvailable) {
             if (!dangerous.contains(piece)) {
                 safe.add(piece);
             }
@@ -192,35 +195,35 @@ public class GameLogic {
     }
 
     public static Move getOpportunityMove() {
-        int[][] board = Globals.logicBoard;
-        int myPiece = Globals.logicControl.getFirst();
+        byte[][] board = Globals.logicBoard;
+        byte myPiece = Globals.logicControl.getFirst();
         List<Move> emptySquares = getEmptySquares(board);
 
         // Score all moves
         List<Move> sortedMoves = new ArrayList<>(emptySquares);
         sortedMoves.sort((a, b) -> {
-            int scoreB = scoreMultiOpportunities(board, b.getRow(), b.getCol(), myPiece);
-            int scoreA = scoreMultiOpportunities(board, a.getRow(), a.getCol(), myPiece);
-            return Integer.compare(scoreB, scoreA); // descending order
+            byte scoreB = scoreMultiOpportunities(board, b.getRow(), b.getCol(), myPiece);
+            byte scoreA = scoreMultiOpportunities(board, a.getRow(), a.getCol(), myPiece);
+            return Byte.compare(scoreB, scoreA); 
         });
 
         for (Move move : sortedMoves) {
-            int row = move.getRow();
-            int col = move.getCol();
+            byte row = move.getRow();
+            byte col = move.getCol();
 
             board[row][col] = myPiece; // Simulate
 
-            List<Integer> remaining = new ArrayList<>(Globals.logicControl);
-            remaining.remove(Integer.valueOf(myPiece));
+            List<Byte> remaining = new ArrayList<>(Globals.logicControl);
+            remaining.remove(Byte.valueOf(myPiece));
 
             boolean hasSafePiece = false;
 
-            for (int piece : remaining) {
+            for (byte piece : remaining) {
                 for (Move replyMove : emptySquares) {
                     if (replyMove.equals(move)) continue;
 
-                    int r = replyMove.getRow();
-                    int c = replyMove.getCol();
+                    byte r = replyMove.getRow();
+                    byte c = replyMove.getCol();
 
                     board[r][c] = piece;
 
@@ -250,22 +253,22 @@ public class GameLogic {
         return sortedMoves.isEmpty() ? null : sortedMoves.get(0);
     }
 
-    public static int scoreMultiOpportunities(int[][] board, int row, int col, int piece) {
-        int score = 0;
+    public static byte scoreMultiOpportunities(byte[][] board, byte row, byte col, byte piece) {
+        byte score = 0;
 
         board[row][col] = piece; // simulate
 
-        int[][] lines = {
+        byte[][] lines = {
             board[row], // Row
             getColumn(col), // Column
             (row == col) ? getDiagonal(true) : null,
             (row + col == 3) ? getDiagonal(false) : null
         };
 
-        for (int[] line : lines) {
+        for (byte[] line : lines) {
             if (line == null) continue;
 
-            int traitCount = countSharedTrait(line);
+            byte traitCount = countSharedTrait(line);
             if (traitCount >= 2 && traitCount < 4) {
                 score += traitCount; // add more for longer sequences
             }
@@ -275,14 +278,14 @@ public class GameLogic {
         return score;
     }
 
-    private static int countSharedTrait(int[] line) {
-        int andBits = -1;
-        int orNotBits = ~0;
-        int filled = 0;
+    private static byte countSharedTrait(byte[] line) {
+        byte andBits = -1;
+        byte orNotBits = ~0;
+        byte filled = 0;
 
-        for (int val : line) {
+        for (byte val : line) {
             if (val == 0) continue;
-            int bits = val - 1;
+            byte bits = (byte) (val - 1);
             andBits &= bits;
             orNotBits &= ~bits;
             filled++;
@@ -291,35 +294,35 @@ public class GameLogic {
         return ((andBits | orNotBits) != 0) ? filled : 0;
     }
 
-    public static int[] countSharedTraitsIn3AlignedLines(int row, int col) {
-        int[][] board = Globals.logicBoard;
+    public static byte[] countSharedTraitsIn3AlignedLines(byte row, byte col) {
+        byte[][] board = Globals.logicBoard;
 
-        int[][] lines = {
+        byte[][] lines = {
             board[row],
             GameLogic.getColumn(col),
             (row == col) ? GameLogic.getDiagonal(true) : null,
             (row + col == 3) ? GameLogic.getDiagonal(false) : null
         };
 
-        int[] traitMatches = new int[4];
+        byte[] traitMatches = new byte[4];
 
-        for (int[] line : lines) {
+        for (byte[] line : lines) {
             if (line == null) continue;
 
-            int filled = 0;
-            int andBits = -1;
-            int orNotBits = ~0;
+            byte filled = 0;
+            byte andBits = -1;
+            byte orNotBits = ~0;
 
-            for (int val : line) {
+            for (byte val : line) {
                 if (val == 0) continue;
-                int bits = val - 1;
+                byte bits = (byte) (val - 1);
                 andBits &= bits;
                 orNotBits &= ~bits;
                 filled++;
             }
 
             if (filled == 3 && ((andBits | orNotBits) & 0b1111) != 0) {
-                for (int bit = 0; bit < 4; bit++) {
+                for (byte bit = 0; bit < 4; bit++) {
                     boolean shared = ((andBits >> bit) & 1) == 1 || ((orNotBits >> bit) & 1) == 1;
                     if (shared) traitMatches[bit]++;
                 }
@@ -329,15 +332,7 @@ public class GameLogic {
         return traitMatches;
     }
 
-    public static List<Move> getEmptySquares(int[][] board) {
-        List<Move> emptySquares = new ArrayList<>();
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
-                if (board[row][col] == 0) {
-                    emptySquares.add(new Move(row, col));
-                }
-            }
-        }
-        return emptySquares;
+    public static List<Move> getEmptySquares(byte[][] board) {
+        return Globals.emptySquares;
     }
 }

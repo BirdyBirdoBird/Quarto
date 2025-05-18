@@ -5,7 +5,6 @@
 
 package Quarto.Utils;
 
-import Quarto.Globals;
 import Quarto.Graphics.Square;
 
 /**
@@ -29,13 +28,13 @@ public class Utils {
     }
     
 
-    public static int encodePiece(Square square){
-        int bits = 0;
+    public static byte encodePiece(Square square){
+        byte bits = 0;
         if (square.isRed)    bits |= 1;   // bit 0
         if (square.isBig)    bits |= 1 << 1; // bit 1
         if (!square.isRound)  bits |= 1 << 2; // bit 2
         if (square.isHollow) bits |= 1 << 3; // bit 3
-        return bits + 1; // Shift range to 1–16 instead of 0–15
+        return (byte) ((byte) bits + 1); // Shift range to 1–16 instead of 0–15
     }
 
     public static void printMatrix(int[][] matrix) {

@@ -6,8 +6,10 @@
 package Quarto;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import Quarto.Utils.GameState;
+import Quarto.Utils.Move;
 
 /**
  *
@@ -16,6 +18,7 @@ import Quarto.Utils.GameState;
 public class Globals {
     public static GameState gameState = GameState.PLAYER_SELECT_MOVE;
     public static boolean botPLaying = false;
-    public static int[][] logicBoard;
-    public static LinkedList<Integer> logicControl = new LinkedList<>();
+    public static byte[][] logicBoard;
+    public static LinkedList<Byte> logicControl = new LinkedList<>();
+    public static List<Move> emptySquares = new LinkedList<>();
 }
