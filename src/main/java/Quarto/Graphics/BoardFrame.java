@@ -12,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import Quarto.Globals;
 import Quarto.Logics.GameLogic;
 import Quarto.Utils.Move;
 import Quarto.Utils.Utils;
@@ -78,7 +77,6 @@ public class BoardFrame extends JFrame
     {
         if (control.getSelectedPiece() != null && square.isEmpty)
         {
-            Globals.emptySquares.remove(new Move(row, col));
             Square controlSquare = control.getSelectedPiece();
             square.addPiece(controlSquare.isRed, controlSquare.isHollow, controlSquare.isBig, controlSquare.isRound);
             board[row][col] = square;
@@ -86,6 +84,7 @@ public class BoardFrame extends JFrame
             gameLogic.addPiece((byte)square.row, (byte) square.col, Utils.encodePiece(square));
             checkGameOver();
             isOneWin = !isOneWin;
+            GameLogic.updateEmptySquares();
         }
     }
 

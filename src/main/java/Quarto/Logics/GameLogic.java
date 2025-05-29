@@ -17,11 +17,7 @@ public class GameLogic {
 
     public GameLogic() {
         Globals.logicBoard = new byte[4][4];
-        for (byte i = 0; i < 4; i++) {
-            for (byte k = 0; k < 4; k++) {
-                Globals.emptySquares.add(new Move(i, k));
-            }
-        } 
+        updateEmptySquares();
         turns = 1;
     }
 
@@ -334,5 +330,16 @@ public class GameLogic {
 
     public static List<Move> getEmptySquares(byte[][] board) {
         return Globals.emptySquares;
+    }
+
+    public static void updateEmptySquares(){
+        Globals.emptySquares.clear();
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (Globals.logicBoard[row][col] == 0) {
+                    Globals.emptySquares.add(new Move((byte)row, (byte)col));
+                }
+            }
+        }
     }
 }
